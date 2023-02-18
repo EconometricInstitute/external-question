@@ -1,5 +1,7 @@
 # external-question
 
+Provide a stable way to provide external questions in exam software.
+
 ## Project setup
 ```
 yarn install
