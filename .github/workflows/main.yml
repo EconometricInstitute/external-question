@@ -3,7 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-and-deploy:
@@ -30,10 +30,10 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build website
-        run: yarn build:with-prefix
+        run: yarn build
         env:
           PATH_PREFIX: '/external-question'
-          SITE_URL: 'https://econometricinstitute.github.io/xyz'
+          SITE_URL: 'https://econometricinstitute.github.io/external-question'
           CI: true
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
