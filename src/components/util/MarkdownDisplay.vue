@@ -108,7 +108,8 @@ export default {
 
 <style>
 .adjust-md code::before {
-  content: "" !important
+  content: "" !important;
+  display: none;
 }
 
 .adjust-md code::after {
@@ -120,8 +121,19 @@ export default {
   color: black !important;
 }
 
+.adjust-md.question-text pre[class*="language-"] {
+  padding: 0.25em !important;
+  margin-right: 0.5em;
+}
+
+.adjust-md pre[class*="language-"] code span.token.operator {
+  background: rgba(0,0,0,0);
+}
+
 .adjust-md pre code {
+  display: inline-block !important;
   width: 100%;
+  padding: 0px;
 }
 
 .adjust-md pre {
