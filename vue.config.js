@@ -6,7 +6,7 @@ module.exports = {
     view: {
       // 
       entry: 'src/pages/view/main.js',
-      filename: 'view',
+      filename: 'view.html',
       title: 'Question Viewer'
     }
   },
