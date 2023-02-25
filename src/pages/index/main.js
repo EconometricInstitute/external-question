@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import View from './View.vue'
+import Index from './Index.vue'
 import vuetify from '@/plugins/vuetify'
 import store from '@/store'
 import { Base64 } from 'js-base64'
@@ -27,5 +27,5 @@ updateHash();
 new Vue({
   vuetify,
   store,
-  render: h => h(View)
+  render: h => h(Index)
 }).$mount('#app')
