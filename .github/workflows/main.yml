@@ -36,7 +36,7 @@ jobs:
           SITE_URL: 'https://econometricinstitute.github.io/external-question'
           CI: true
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: dist
