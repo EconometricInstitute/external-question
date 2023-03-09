@@ -1,6 +1,6 @@
 <template>
   <div class="fill-height">
-    <v-tabs v-model="tab" class="fill-height">
+    <v-tabs v-model="tab" class="fill-height" @change="updateTab()">
       <v-tab>General</v-tab>
       <v-tab>Description</v-tab>
       <v-tab>Specific</v-tab>
@@ -34,7 +34,7 @@
         <v-container class="fill-height">
           <v-row class="fill-height">
             <v-col cols="6" class="fill-height">
-              <codemirror class="fill-height" ref="editor" :value="question.description" :options="editorOptions" @input="updateDescription"/>
+              <codemirror class="fill-height editor" ref="editor" :value="question.description" :options="editorOptions" @input="updateDescription"/>
             </v-col>
             <v-col cols="6" style="fill-height">
               <MarkdownDisplay :source="question.description" />
@@ -103,8 +103,8 @@ export default {
         mode: 'text/x-markdown',
         lineNumbers: true,
         line: true,
-        lineWrapping: true
-    }
+        lineWrapping: true,
+    },
   }),
   methods: {
     updateName(newVal) {
@@ -122,7 +122,24 @@ export default {
     updateQuestion(newVal) {
       const q = {...this.question, ...newVal};
       this.$store.commit('setQuestion', q);
+    },
+    updateTab() {
+      this.$nextTick(() => {
+        console.log('hi!', this.$refs);
+        console.log(Object.keys(this.$refs));
+        if (this.$refs.editor) {
+          console.log(this.$refs.editor);
+          this.$refs.editor.refresh();
+          // this.$refs.editor.setSize('100%', '100%');
+        }
+      })
     }
   },
 };
 </script>
+
+<style>
+.editor div.CodeMirror {
+  height: 75%;
+}
+</style>
