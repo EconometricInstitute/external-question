@@ -18,8 +18,7 @@
       <v-spacer></v-spacer>
       <h3>Edit Question</h3>
       <v-spacer></v-spacer>
-      <v-btn color="secondary" dark :disabled="question == null" :href="'view.html#'+questionHash"
-              target="_blank">
+      <v-btn color="secondary" dark :disabled="question == null" :href="'view.html#'+questionHash" target="_blank">
         <v-icon>mdi-eye</v-icon> Preview
       </v-btn>
       &nbsp;
@@ -44,8 +43,7 @@
         </v-row>
       </v-container>
       <EditExamQuestion v-else :question="question" :focused="true"></EditExamQuestion>
-    </v-main>
-    <v-snackbar centered v-model="snackbar" :timeout="3000">
+      <v-snackbar centered v-model="snackbar" :timeout="3000">
       {{ snackbarText }}
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -58,6 +56,8 @@
         </v-btn>
       </template>
     </v-snackbar>
+
+    </v-main>
     <ConfirmDialog ref="clearDialog" title="Create New Question" type="warning" width="35em"
     text="This will clear all current question data and create a new question from scratch"
     :confirm="clearQuestion" />

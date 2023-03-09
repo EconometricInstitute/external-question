@@ -43,7 +43,7 @@ import MultiCodingQuestion from '@/components/questions/multicoding/MultiCodingQ
 import BlocklyQuestion from '@/components/questions/blockly/BlocklyQuestion';
 
 export default {
-  name: 'View',
+  name: 'ExamView',
 
   components: {
     CodingQuestion,
