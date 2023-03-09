@@ -135,7 +135,6 @@ onmessage = function(msg) {
     const script = payload.script;
     const id = payload.id;
     try {
-        //const data = eval(script);
         const f = new Function(script);
         const data = f();
         postMessage(JSON.stringify({error: false, id, data}));
@@ -185,7 +184,6 @@ async function evalInWorker(script) {
     const worker = new Worker(workerScriptURL);
     const result = new Promise((resolve, reject) => {
         worker.onmessage = (resp) => {
-            //console.log(resp.data);
             if (resp.error) {
                 reject(resp.data);
             }
@@ -195,7 +193,7 @@ async function evalInWorker(script) {
             worker.terminate();
         }
     });
-    worker.postMessage(script);
+    worker.postMessage({script, id: 0});
     return result;
 }
 

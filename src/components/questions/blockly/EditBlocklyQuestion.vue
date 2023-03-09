@@ -25,6 +25,13 @@
           <codemirror class="editor" ref="editor4" :value="value.toolbox" :options="xmlOptions" @input="updateToolbox"/>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="6">
+          <v-slider v-model.number="value.decimals" min="0" step="1" max="8" ticks thumb-label 
+            :label="'Number of decimals to compare in numbers '+value.decimals" />
+            <v-checkbox v-model="value.strictString" label="Perform strict comparison of strings (correct spacing and case are required)" />
+        </v-col>
+      </v-row>
     </v-container>
   </v-form>
 </template>

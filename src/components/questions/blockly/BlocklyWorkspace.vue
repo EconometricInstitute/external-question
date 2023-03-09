@@ -4,6 +4,7 @@
 
 <script>
 import * as Blockly from 'blockly';
+import {javascriptGenerator} from 'blockly/javascript';
 import {outputCode, envToJS, getSVG} from './blockly_utils.js';
 import 'blockly/media/sprites.png';
 
@@ -19,7 +20,7 @@ export default {
     this.workspace = Blockly.inject(this.divId, {
         toolbox: this.question.toolbox,
         sounds: false,
-        media: '/webjars/blockly/media/'
+        media: '.'
     });
     if (this.inputAnswer && this.inputAnswer.xml) {
       const dom = Blockly.Xml.textToDom(this.inputAnswer.xml);
@@ -52,23 +53,23 @@ export default {
       });
     },
     getTestingCode() {
-        Blockly.JavaScript.STATEMENT_PREFIX = 'if ($step_count++ > '+this.maxSteps+') throw "Too many steps. Check for infinite loops.";';
-        let generated = Blockly.JavaScript.workspaceToCode(this.workspace);
+        javascriptGenerator.STATEMENT_PREFIX = 'if ($step_count++ > '+this.maxSteps+') throw "Too many steps. Check for infinite loops.";';
+        let generated = javascriptGenerator.workspaceToCode(this.workspace);
         generated = 'var $step_count = 0;' + generated;
-        Blockly.JavaScript.STATEMENT_PREFIX = '';
+        javascriptGenerator.STATEMENT_PREFIX = '';
         return generated;
     },
     getDisplayCode() {
-      let rawCode = Blockly.JavaScript.workspaceToCode(this.workspace);
+      let rawCode = javascriptGenerator.workspaceToCode(this.workspace);
       //rawCode = rawCode.substring(rawCode.indexOf("\n") + 1).trim() + '\n';
       return this.preCode + rawCode;
     },
     getTracingCode() {
-      Blockly.JavaScript.STATEMENT_PREFIX = 'await sleep('+STEP_INTERVAL+');if ($step_count++ > '+this.maxSteps+') throw "Too many steps. Check for infinite loops.";highlightBlock(%1);\n';
-      let rawCodeHL = Blockly.JavaScript.workspaceToCode(this.workspace);
+      javascriptGenerator.STATEMENT_PREFIX = 'await sleep('+STEP_INTERVAL+');if ($step_count++ > '+this.maxSteps+') throw "Too many steps. Check for infinite loops.";highlightBlock(%1);\n';
+      let rawCodeHL = javascriptGenerator.workspaceToCode(this.workspace);
       rawCodeHL = rawCodeHL.substring(rawCodeHL.indexOf("\n") + 1).trim() + '\n';
       rawCodeHL = rawCodeHL.replace(/\s+function\s+/g, '\nasync function ');
-      Blockly.JavaScript.STATEMENT_PREFIX = '';
+      javascriptGenerator.STATEMENT_PREFIX = '';
       //console.log(rawCodeHL);
       return this.preCode
            + rawCodeHL
@@ -108,7 +109,7 @@ export default {
       focused() {
         this.$nextTick(() => {
             Blockly.svgResize(this.workspace);
-            Blockly.resizeSvgContents(this.workspace);
+            Blockly.resizeContents(this.workspace);
             this.workspace.resize();
             this.workspace.resizeContents();
         });          

@@ -20,7 +20,7 @@
                 <v-icon>mdi-stop</v-icon>
                 Stop
               </v-btn>              
-              <v-btn :disabled="running" @click.stop="submitCode()" class="run-toolbar-el">
+              <v-btn :disabled="running || testCases == null" @click.stop="submitCode()" class="run-toolbar-el">
                 <v-icon>mdi-send</v-icon>
                 Submit
               </v-btn>
@@ -91,14 +91,14 @@
             This indicates your program is likely incorrect.
           </v-alert>
           <ul>
-            <li v-for="e in outputDisplay" :key="'test-output-'+e.index">
+            <li v-for="e in outputDisplay" :key="'test-'+e.index">
               <span>With the following inputs:</span>
-                <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+key">
+                <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
                   {{val}} = {{JSON.stringify(key)}}
                 </span>
               <span v-if="!e.output.error">
                 <span> your program produced the following outputs:</span>
-                <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+key">
+                <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
                   {{val}} = {{JSON.stringify(key)}}
                 </span>
               </span>
@@ -120,7 +120,7 @@ import * as md5hex from 'md5-hex';
 
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import BlocklyWorkspace from './BlocklyWorkspace';
-import {displayEnv, evalScripts, evalInWorkerTrace, formatValue} from './blockly_utils';
+import {displayEnv, evalScripts, evalInWorker, evalInWorkerTrace, formatValue} from './blockly_utils';
 
 export default {
   name: 'BlocklyQuestion',
@@ -139,12 +139,16 @@ export default {
     dirty: true,
     worker: null,
     traceOutput: null,
-    traceError: null
+    traceError: null,
+    testCases: null
   }),
   created() {
     if (this.inputAnswer) {
       this.dirty = this.inputAnswer.dirty;
       this.testOutput = this.inputAnswer.output;
+    }
+    if (this.question) {
+      this.refreshTestcases();
     }
   },
   methods: {
@@ -201,6 +205,20 @@ export default {
           this.dirty = false;
           this.ioTab = 4;
         });
+    },
+    refreshTestcases() {
+      const script = this.question.testCaseScript+';return getTestCases();';
+      evalInWorker(script)
+      .then(resStr => {
+        const res = JSON.parse(resStr);
+        if (!res.error) {
+          this.testCases = res.data;
+        }
+        else {
+          // TODO: warn the user that there is a problem??
+          console.log('Error while generating testCases: '+res.data);
+        }
+      });
     }
   },
   computed: {
@@ -232,9 +250,9 @@ export default {
       res += 'return $resultObj;';
       return res;
     },
-    testCases() {
-      return eval(this.question.testCaseScript+';getTestCases()');
-    },
+    // testCases() {
+    //   return eval(this.question.testCaseScript+';getTestCases()');
+    // },
     outputDisplay() {
       const result = [];
       if (!this.testOutput || this.testOutput.length == 0) {
@@ -247,7 +265,8 @@ export default {
           for (const outputVar of this.outputOrder) {
             if (op.data[outputVar]) {
               // TODO: pass the question preferences down from the config
-              op.data[outputVar] = formatValue(op.data[outputVar]);
+              const decimals = this.question.decimals !== undefined ? this.question.decimals : 1;
+              op.data[outputVar] = formatValue(op.data[outputVar], decimals, this.question.strictStrings);
             }
           }
         }
@@ -305,6 +324,9 @@ export default {
   watch: {
     fullAnswer() {
       this.$emit('input', this.fullAnswer);
+    },
+    question() {
+      this.refreshTestcases();
     }
   }
 };
