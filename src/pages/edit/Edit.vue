@@ -68,7 +68,8 @@
 
 <script>
 import { v4 as uuidv4 } from 'uuid';
-import { Base64 } from 'js-base64';
+// import { Base64 } from 'js-base64';
+import { pack } from '@/util/hashtools.js';
 import copyToClipboard from 'copy-to-clipboard';
 
 import { mapState } from 'vuex';
@@ -172,7 +173,8 @@ export default {
       if (this.question == null) {
         return '';
       }
-      return Base64.encode(JSON.stringify(this.question));
+      //return Base64.encode(JSON.stringify(this.question));
+      return pack(this.question);
     },
     questionLink() {
       const origin = window.location.origin;
