@@ -13,6 +13,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field label="Question UUID" :value="question.uuid" disabled required />
+                  <v-checkbox v-model="uuidFixed" label="UUID Fixed" />
                 </v-col>
               </v-row>
               <v-row>
@@ -65,6 +66,7 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 //import MonacoEditor from 'vue-monaco';
 //import VueMarkdownPlus from 'vue-markdown-plus';
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
@@ -98,6 +100,7 @@ export default {
   },
   data: () => ({
     tab: 0,
+    uuidFixed: false,
     editorOptions: {
         tabSize: 4,
         mode: 'text/x-markdown',
@@ -107,20 +110,29 @@ export default {
     },
   }),
   methods: {
+    updateUuid(q) {
+      if (!this.uuidFixed) {
+        q.uuid = uuidv4();
+      }
+    },
     updateName(newVal) {
       const q = {...this.question, name: newVal};
+      this.updateUuid(q);
       this.$store.commit('setQuestion', q);
     },
     updateDefaultAnswer(newVal) {
       const q = {...this.question, defaultAnswer: newVal};
+      this.updateUuid(q);
       this.$store.commit('setQuestion', q);
     },
     updateDescription(newVal) {
       const q = {...this.question, description: newVal};
+      this.updateUuid(q);
       this.$store.commit('setQuestion', q);
     },
     updateQuestion(newVal) {
       const q = {...this.question, ...newVal};
+      this.updateUuid(q);
       this.$store.commit('setQuestion', q);
     },
     updateTab() {
@@ -134,7 +146,7 @@ export default {
         }
       })
     }
-  },
+  }
 };
 </script>
 
