@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Index from './Index.vue'
 import vuetify from '@/plugins/vuetify'
-import store from '@/store'
+import createStore from '@/store'
+
+const store = createStore([]);
 
 Vue.config.productionTip = false
 

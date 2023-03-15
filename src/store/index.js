@@ -4,9 +4,14 @@ import Vuex from 'vuex'
 import singletonPlugin from '@/store/singletonPlugin.js';
 import persistencePlugin from '@/store/persistencePlugin.js';
 
+const pluginsAvailable = {
+  singleton: singletonPlugin,
+  persistence: persistencePlugin
+}
+
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
+const baseStore = {
   state: {
     question: null,
     loadError: null,
@@ -45,7 +50,20 @@ const store = new Vuex.Store({
       return null;
     }
   },
-  plugins: [singletonPlugin, persistencePlugin]
-})
+};
 
-export default store;
+function createStore(enablePlugins = ['singleton', 'persistence']) {
+  const plugins = [];
+  for (const p of enablePlugins) {
+    const plugin = pluginsAvailable[p];
+    if (plugin) {
+      plugins.push(plugin)
+    }
+    else {
+      throw "Plugin key '"+p+"' is unknown. Can not create VueX store.";
+    }
+  }  
+  return new Vuex.Store({...baseStore, plugins});
+}
+
+export default createStore;

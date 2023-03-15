@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import ExamView from './ExamView.vue'
 import vuetify from '@/plugins/vuetify'
-import store from '@/store'
+import createStore from '@/store'
 import { processHashInStore } from '@/util/hashtools.js';
 
 Vue.config.productionTip = false
+
+const store = createStore();
 
 processHashInStore(store);
 
