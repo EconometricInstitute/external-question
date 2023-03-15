@@ -36,52 +36,65 @@
       </div>
     </div>
     <div class="question-io">
+      <v-snackbar v-model="copyBar" centered>
+        The answer code was copied to the clipboard
+        <template v-slot:action="{ attrs }">
+          <v-btn color="primary"
+          text
+          v-bind="attrs"
+          @click="copyBar = false">
+          OK
+        </v-btn>
+        </template>
+      </v-snackbar>
       <v-tabs class="question-iotabs" background-color="secondary" dark
         v-model="ioTab">
         <v-tabs-slider color="white"></v-tabs-slider>
-        <v-tab>Input</v-tab>
-        <v-tab>Goal</v-tab>
-        <v-tab>Output</v-tab>
+        <v-tab>Example</v-tab>
+        <v-tab>Test Result</v-tab>
         <v-tab>Code</v-tab>
         <v-tab>Answer</v-tab>
       </v-tabs>
       <div class="question-iocontent">
         <div v-if="ioTab == 0" class="iotab">
-          <h4>This is an example input of one testcase:</h4>
-          <div v-html="inputHTML"></div>
+          <h4>In this tab you can find the input and output for an example testcase</h4>
+          <div class="example">
+            <div class="exampleInput">
+              <h4>Example Input</h4>
+              <EnvironmentDisplay :data="question.exampleInput" />
+            </div>
+            <div class="exampleOutput">
+              <h4>Example Output</h4>
+              <EnvironmentDisplay :data="question.exampleOutput" />
+            </div>
+          </div>
         </div>
         <div v-if="ioTab == 1" class="iotab">
-          <h4>For the example input, the output of your program should be as follows:</h4>
-          <div v-html="goalHTML"></div>
-        </div>
-        <div v-if="ioTab == 2" class="iotab">
-          <div v-if="traceOutput">
-            <h4>Your program produced the following output:</h4>
-            <div v-html="outputHTML"></div>
-          </div>
-          <div v-else-if="traceError">
+          <div v-if="traceError">
             <h4>Error while running</h4>
             <v-alert type="error">
-              The following error occurred while your program was executed:
+              The following error occurred while your program was tested:
               <br />
               {{traceError}}
             </v-alert>
           </div>
-          <div v-else>
-            <h4>This tab will contain the output of your program after you run it.</h4>
+          <div v-if="traceOutput">
+            <h4>Your program produced the following output:</h4>
+            <EnvironmentDisplay :data="traceOutput" />
+          </div>
+          <div v-if="!traceOutput && !traceError">
+            <h4>This tab will contain the output of your program after you test it.</h4>
           </div> 
         </div>
-        <div v-if="ioTab == 3" class="iotab">
+        <div v-if="ioTab == 2" class="iotab">
+          <h4 v-if="!code.display">This tab will contain the Javascript code generated from your program.</h4>          
+          <template v-else>
             <h4>This is the generated JavaScript code of your program:</h4>
-          <pre class="code"><code class="code">{{code.display}}</code></pre>
+            <pre class="code"><code class="code">{{code.display}}</code></pre>
+          </template>
         </div>
-        <div class="iotab" v-if="ioTab == 4">
-          <span v-if="testOutput.length == 0">After you submit your code, the answer code appears here</span>
-          <div v-if="testOutput.length > 0">
-            <strong>Your answer code is:</strong><span class="answercode">{{answerCode}}</span>
-            <br />
-            This code is based on the following output of your program:
-          </div>
+        <div class="iotab" v-if="ioTab == 3">
+          <span v-if="testOutput.length == 0">After you run your code, the answer code appears here</span>
           <v-alert v-if="outputErrors" type="error">
             Your program produced an error for at least one testcase.
             This indicates your program is likely incorrect.
@@ -90,24 +103,38 @@
             One of the output variables was missing (undefined) for at least one testcase.
             This indicates your program is likely incorrect.
           </v-alert>
-          <ul>
-            <li v-for="e in outputDisplay" :key="'test-'+e.index">
-              <span>With the following inputs:</span>
-                <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
-                  {{val}} = {{JSON.stringify(key)}}
+          <div v-if="testOutput.length > 0">
+            <h4>The following answer code was computed. Click <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon> to copy it to the clipboard</h4>
+            <v-text-field class="answercode-box"
+                          readonly solo dense
+                          :value="answerCode"
+            >
+              <template v-slot:prepend-inner>
+                  <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon>
+              </template>
+            </v-text-field>
+          </div>
+          <template v-if="testOutput.length > 0">
+            <h4>The answer code is based on the following output of your program:</h4>
+            <ul>
+              <li v-for="e in outputDisplay" :key="'test-'+e.index">
+                <span>With the following inputs:</span>
+                  <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
+                    {{val}} = {{JSON.stringify(key)}}
+                  </span>
+                <span v-if="!e.output.error">
+                  <span> your program produced the following outputs:</span>
+                  <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
+                    {{val}} = {{JSON.stringify(key)}}
+                  </span>
                 </span>
-              <span v-if="!e.output.error">
-                <span> your program produced the following outputs:</span>
-                <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
-                  {{val}} = {{JSON.stringify(key)}}
-                </span>
-              </span>
-              <span v-if="e.output.error">
-                <span> your program produced the following error:</span>
-                <span class="blockly-outputerror">{{e.output.data}}</span>
-              </span>              
-            </li>
-          </ul>
+                <span v-if="e.output.error">
+                  <span> your program produced the following error:</span>
+                  <span class="blockly-outputerror">{{e.output.data}}</span>
+                </span>              
+              </li>
+            </ul>
+          </template>
         </div>
       </div>
     </div>
@@ -117,10 +144,12 @@
 <script>
 //import VueMarkdownPlus from 'vue-markdown-plus';
 import * as md5hex from 'md5-hex';
+import copyToClipboard from 'copy-to-clipboard';
 
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import BlocklyWorkspace from './BlocklyWorkspace';
-import {displayEnv, evalScripts, evalInWorker, evalInWorkerTrace, formatValue} from './blockly_utils';
+import EnvironmentDisplay from './EnvironmentDisplay.vue';
+import {evalScripts, evalInWorker, evalInWorkerTrace, formatValue} from './blockly_utils';
 
 export default {
   name: 'BlocklyQuestion',
@@ -130,7 +159,8 @@ export default {
   components: {
     //VueMarkdownPlus,
     MarkdownDisplay,
-    BlocklyWorkspace
+    BlocklyWorkspace,
+    EnvironmentDisplay
   },
   data: () => ({
     ioTab: null,
@@ -140,7 +170,8 @@ export default {
     worker: null,
     traceOutput: null,
     traceError: null,
-    testCases: null
+    testCases: null,
+    copyBar: false
   }),
   created() {
     if (this.inputAnswer) {
@@ -159,13 +190,20 @@ export default {
       if (!this.worker) { 
         this.traceOutput = null;
         this.traceError = null;
-        this.ioTab = 3;
+        this.ioTab = 2;
 
         const script = this.code.trace;
-        const highlight = this.$refs.workspace.highlight;
-        const finishTrace = this.finishTrace;
-        const errorTrace = this.errorTrace;
-        this.worker = evalInWorkerTrace(script, highlight, finishTrace, errorTrace);
+        if (script) {
+          const highlight = this.$refs.workspace.highlight;
+          const finishTrace = this.finishTrace;
+          const errorTrace = this.errorTrace;
+          this.worker = evalInWorkerTrace(script, highlight, finishTrace, errorTrace);
+        }
+        else {
+          this.traceOutput = null;
+          this.traceError = 'Can not run an empty program'; 
+          this.ioTab = 1;
+        }
       }
     },
     stopTraceCode() {
@@ -176,12 +214,12 @@ export default {
     },
     finishTrace(result) {
       this.traceOutput = result;
-      this.ioTab = 2;
+      this.ioTab = 1;
       this.stopTraceCode();
     },
     errorTrace(error) {
       this.traceError = error;
-      this.ioTab = 2;
+      this.ioTab = 1;
       this.stopTraceCode();
     },
     submitCode() {
@@ -203,7 +241,7 @@ export default {
           //console.log(result);
           this.testOutput = result;
           this.dirty = false;
-          this.ioTab = 4;
+          this.ioTab = 3;
         });
     },
     refreshTestcases() {
@@ -219,21 +257,13 @@ export default {
           console.log('Error while generating testCases: '+res.data);
         }
       });
+    },
+    copyAnswerCode() {
+      copyToClipboard(this.answerCode);
+      this.copyBar = true;
     }
   },
   computed: {
-    inputHTML() {
-      return displayEnv(this.question.exampleInput);
-    },
-    goalHTML() {
-      return displayEnv(this.question.exampleOutput);
-    },
-    outputHTML() {
-      if (this.traceOutput) {
-        return displayEnv(this.traceOutput);
-      }
-      return '';
-    },
     outputOrder() {
       const res = [];
       for (const key of Object.keys(this.question.exampleOutput)) {
@@ -374,6 +404,17 @@ export default {
   padding: 0.5em;
 }
 
+.example {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.example>div {
+  border: gray 1px solid;
+  margin: 3px;
+  padding: 3px;
+}
+
 .instructions {
   min-width: 25em;
   max-width: 40em;
@@ -397,6 +438,12 @@ export default {
 
 .scroll {
   overflow: scroll;
+}
+
+.answercode-box {
+  max-width: 34em;
+  font-family: monospace;
+  margin-top: 0.5em;
 }
 
 .code {
