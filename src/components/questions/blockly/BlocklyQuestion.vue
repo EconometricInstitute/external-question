@@ -306,7 +306,19 @@ export default {
         }
       }
       const answerStr = answerLst.join('|');
-      return md5hex(answerStr);
+      let answerCode = md5hex(answerStr);
+      if (this.question.hashReps && this.question.hashReps > 1) {
+        for (let i=1; i < this.question.hashReps; i++) {
+          answerCode = md5hex(answerCode + '|' + answerStr);
+        }
+      }
+      if (this.question.hashLength) {
+        answerCode = answerCode.substring(0, this.question.hashLength);
+      }
+      if (this.question.hashPrefix) {
+        answerCode = this.question.hashPrefix + answerCode;
+      }
+      return answerCode;
     },
     fullAnswer() {
       return {

@@ -27,9 +27,13 @@
       </v-row>
       <v-row>
         <v-col cols="6">
+          <h4>Answer code settings</h4>
           <v-slider v-model.number="value.decimals" min="0" step="1" max="8" ticks thumb-label 
             :label="'Number of decimals to compare in numbers '+value.decimals" />
-            <v-checkbox v-model="value.strictString" label="Perform strict comparison of strings (correct spacing and case are required)" />
+          <v-checkbox v-model="value.strictString" label="Perform strict comparison of strings (correct spacing and case are required)" />
+          <v-text-field class="short-field" label="Answer code prefix" v-model="value.hashPrefix" @input="updateHashLength"/>
+          <v-text-field class="short-field" label="Answer code repetitions" v-model="value.hashReps" min="1" type="number" @input="updateHashReps"/>
+          <v-text-field class="short-field" label="Answer code length" v-model="value.hashLength" min="1" type="number" @input="updateHashLength"/>
         </v-col>
       </v-row>
     </v-container>
@@ -137,6 +141,18 @@ export default {
       this.value.toolbox = value;
       this.$emit('input', this.value);
     },
+    updateHashReps(value) {
+      this.value.hashReps = value;
+      this.$emit('input', this.value);
+    },
+    updateHashLength(value) {
+      this.value.hashLength = value;
+      this.$emit('input', this.value);
+    },
+    updateHashPrefix(value) {
+      this.value.hashPrefix = value;
+      this.$emit('input', this.value);
+    },    
     refreshAll() {
       this.$refs.editor1.refresh();
       this.$refs.editor2.refresh();
@@ -169,5 +185,9 @@ export default {
 
 .editPanel {
   height: 28em;
+}
+
+.short-field {
+  max-width: 20em;
 }
 </style>
