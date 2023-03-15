@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import singletonPlugin from '@/store/singletonPlugin.js';
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
     question: null,
-    loadError: null
+    loadError: null,
+    hasFocus: true,
   },
   mutations: {
     setQuestion(state, question) {
@@ -14,6 +17,9 @@ const store = new Vuex.Store({
     },
     setLoadError(state, error) {
       state.loadError = error;
+    },
+    lostFocus(state) {
+      state.hasFocus = false;
     }
   },
   actions: {
@@ -33,7 +39,8 @@ const store = new Vuex.Store({
       }
       return null;
     }
-  }
+  },
+  plugins: [singletonPlugin]
 })
 
 export default store;

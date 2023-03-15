@@ -14,7 +14,7 @@
             <v-toolbar-items>
               <v-btn v-if="!running" @click.stop="runTraceCode()" class="run-toolbar-el">
                 <v-icon>mdi-play</v-icon>
-                Run
+                Test
               </v-btn>
               <v-btn v-if="running" @click.stop="stopTraceCode()" class="run-toolbar-el">
                 <v-icon>mdi-stop</v-icon>
@@ -22,7 +22,7 @@
               </v-btn>              
               <v-btn :disabled="running || testCases == null" @click.stop="submitCode()" class="run-toolbar-el">
                 <v-icon>mdi-send</v-icon>
-                Submit
+                Run
               </v-btn>
               <div v-if="running" class="running-indicator run-toolbar-el">
                 <div>

@@ -32,6 +32,7 @@
         </v-row>
       </v-container>
     </v-main>
+    <SingletonOverlay />
   </v-app>
 </template>
 
@@ -42,13 +43,16 @@ import CodingQuestion from '@/components/questions/coding/CodingQuestion';
 import MultiCodingQuestion from '@/components/questions/multicoding/MultiCodingQuestion'
 import BlocklyQuestion from '@/components/questions/blockly/BlocklyQuestion';
 
+import SingletonOverlay from '@/components/SingletonOverlay.vue';
+
 export default {
   name: 'ExamView',
 
   components: {
     CodingQuestion,
     MultiCodingQuestion,
-    BlocklyQuestion
+    BlocklyQuestion,
+    SingletonOverlay
   },
 
   data: () => ({

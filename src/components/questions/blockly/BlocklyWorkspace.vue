@@ -1,5 +1,5 @@
 <template>
-   <div class="blockly" :id="divId"></div>
+   <div class="blockly" :id="divId" v-show="hasFocus"></div>
 </template>
 
 <script>
@@ -7,6 +7,8 @@ import * as Blockly from 'blockly';
 import {javascriptGenerator} from 'blockly/javascript';
 import {outputCode, envToJS, getSVG} from './blockly_utils.js';
 import 'blockly/media/sprites.png';
+
+import { mapState } from 'vuex';
 
 const MAX_STEPS = 50000;
 
@@ -88,6 +90,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['hasFocus']),
     maxSteps() {
       if (this.question.maxSteps) {
           return this.question.maxSteps;
