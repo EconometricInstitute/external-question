@@ -41,6 +41,7 @@ export function processHashInStore(store, loadAction='setQuestion', errorAction=
             const question = unpackResult.data;
             // In the future, we could check validation here
             store.commit(loadAction, question);
+            document.title = question.name;
           }
           catch (e) {
             console.log(e);
