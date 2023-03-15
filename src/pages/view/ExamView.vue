@@ -7,13 +7,14 @@
     >
       <h3>{{ questionName }}</h3>
       <v-spacer></v-spacer>
+      <v-btn color="error" @click="restart">
+        <v-icon>mdi-restart</v-icon>
+        Restart
+      </v-btn>
     </v-app-bar>
 
     <v-main>
-      <MultiCodingQuestion v-if="questionType == 'multicoding'" :question="question" :focused="true"></MultiCodingQuestion>
-      <CodingQuestion v-else-if="questionType == 'coding'" :question="question" :focused="true"></CodingQuestion>
-      <BlocklyQuestion v-else-if="questionType == 'blockly'" :question="question" :focused="true"></BlocklyQuestion>
-      <v-container v-else>
+      <v-container v-if="unknownType">
         <v-row>
           <v-col>
             <v-alert color="error">
@@ -31,37 +32,67 @@
           </v-col>
         </v-row>
       </v-container>
+      <component v-else
+                 :is="questionType"
+                 :question="question"
+                 :focused="true"
+                 :inputAnswer="answer"
+                 @input="setAnswer"
+
+      ></component>
     </v-main>
     <SingletonOverlay />
+    <ConfirmDialog
+      ref="restart"
+      :text="'This will clear your current answer and restart the question. \n\n You will lose all current work on this question.'"
+      width="40em"
+      type="error"
+      :confirm="restartConfirmed"
+    />
   </v-app>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
 
-import CodingQuestion from '@/components/questions/coding/CodingQuestion';
-import MultiCodingQuestion from '@/components/questions/multicoding/MultiCodingQuestion'
-import BlocklyQuestion from '@/components/questions/blockly/BlocklyQuestion';
-
 import SingletonOverlay from '@/components/SingletonOverlay.vue';
+import ConfirmDialog from '@/components/util/ConfirmDialog.vue'
+
+import types from '@/components/questions';
+const questionComponents = Object.fromEntries(Object.entries(types).map(([key, value]) => [key, value.view]))
 
 export default {
   name: 'ExamView',
 
   components: {
-    CodingQuestion,
-    MultiCodingQuestion,
-    BlocklyQuestion,
-    SingletonOverlay
+    ...questionComponents,
+    SingletonOverlay,
+    ConfirmDialog
   },
 
   data: () => ({
     //
   }),
 
+  methods: {
+    setAnswer(ans) {
+      this.$store.commit('setAnswer', ans);
+    },
+    restart() {
+      this.$refs.restart.show();
+    },
+    restartConfirmed() {
+      this.$store.commit('setAnswer', null);
+      window.location.reload();
+    }
+  },
+
   computed: {
-    ...mapState(['question', 'loadError']),
-    ...mapGetters(['questionName', 'questionType'])
+    ...mapState(['question', 'loadError', 'answer']),
+    ...mapGetters(['questionName', 'questionType']),
+    unknownType() {
+      return !types[this.questionType];
+    }
   }
 };
 </script>

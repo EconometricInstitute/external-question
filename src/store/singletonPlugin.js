@@ -13,9 +13,7 @@ const plugin = store => {
     };
 
     store.subscribe((mutation, state) => {
-        console.log('Mutation/State', mutation, state);
         if (mutation.type == 'setQuestion' && state.question.uuid) {
-            console.log('Question set');
             bc.postMessage({type: 'lostFocus', uuid: state.question.uuid});
         }
     })

@@ -6,7 +6,7 @@
       </v-card-title>
       <v-card-text>
         <v-alert :type="type">
-          {{text}}
+          <MarkdownDisplay :source="text" />
         </v-alert>
         <div>
           Are you sure you want to continue?
@@ -26,8 +26,11 @@
 </template>
 
 <script>
+import MarkdownDisplay from '@/components/util/MarkdownDisplay.vue';
+
 export default {
   name: 'ConfirmDialog',
+  components: { MarkdownDisplay },
   props: [
     'width',
     'title',

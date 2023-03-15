@@ -255,7 +255,7 @@ export default {
     // },
     outputDisplay() {
       const result = [];
-      if (!this.testOutput || this.testOutput.length == 0) {
+      if (!this.testCases || !this.testOutput || this.testOutput.length == 0) {
         return result;
       }
       for (let i=0; i < this.testCases.length; i++) {

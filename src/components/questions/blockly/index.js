@@ -1,8 +1,6 @@
 import BlocklyQuestion from './BlocklyQuestion';
 import EditBlocklyQuestion from './EditBlocklyQuestion';
 
-
-
 function initialize(newQuestion) {
     return {
         ...newQuestion,

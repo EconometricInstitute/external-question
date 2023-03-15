@@ -107,6 +107,10 @@ export default {
 </script>
 
 <style>
+.adjust-md p:last-child {
+  margin-bottom: 0;
+}
+
 .adjust-md code::before {
   content: "" !important;
   display: none;
