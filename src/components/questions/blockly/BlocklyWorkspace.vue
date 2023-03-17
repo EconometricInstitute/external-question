@@ -16,7 +16,7 @@ const STEP_INTERVAL = 150;
 
 export default {
   name: 'BlocklyWorkspace',
-  props: ['question', 'focused', 'inputAnswer'],
+  props: ['question', 'focused', 'inputAnswer', 'varnames'],
   mounted() {
     // TODO: the media path is now provided by the backend - find a way to solve this issue in the frontend?
     this.workspace = Blockly.inject(this.divId, {
@@ -29,6 +29,7 @@ export default {
       Blockly.Xml.domToWorkspace(dom, this.workspace);
     }
     this.workspace.addChangeListener(this.workspaceChanged);
+    this.updateVarnames();
   },
   data: () => ({
     workspace: null,
@@ -87,6 +88,17 @@ export default {
     clearTrace() {
       this.workspace.highlightBlock('');
       // TODO enable/disable tracing mode?
+    },
+    updateVarnames() {
+      if (this.workspace && this.varnames) {
+        const current = new Set(this.workspace.getAllVariableNames());
+        for (const varname of this.varnames) {
+          if (!current.has(varname)) {
+            this.workspace.createVariable(varname);
+            current.add(varname);
+          }
+        }
+      }
     }
   },
   computed: {
@@ -116,6 +128,9 @@ export default {
             this.workspace.resize();
             this.workspace.resizeContents();
         });          
+      },
+      varnames() {
+        this.updateVarnames();
       }
   }
 }

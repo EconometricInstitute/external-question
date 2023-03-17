@@ -3,7 +3,7 @@
     <div class="question-main">
       <div class="flex-grow-1">
         <BlocklyWorkspace :question="question" :focused="focused" @code="codeChange"
-          :inputAnswer="inputAnswer" ref="workspace" />
+          :inputAnswer="inputAnswer" :varnames="varnames" ref="workspace" />
       </div>
       <div class="instructions">
         <div class="instruction-div scroll-y">
@@ -361,6 +361,13 @@ export default {
     },
     running() {
       return this.worker != null;
+    },
+    varnames() {
+      if (this.question) {
+        const {exampleInput, exampleOutput} = this.question;
+        return [...Object.keys(exampleInput), ...Object.keys(exampleOutput)];
+      }
+      return [];
     }
   },
   watch: {
