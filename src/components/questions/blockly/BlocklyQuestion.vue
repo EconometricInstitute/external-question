@@ -51,7 +51,7 @@
         v-model="ioTab">
         <v-tabs-slider color="white"></v-tabs-slider>
         <v-tab>Example</v-tab>
-        <v-tab>Test Result</v-tab>
+        <v-tab>Example Result</v-tab>
         <v-tab>Code</v-tab>
         <v-tab>Answer</v-tab>
       </v-tabs>
@@ -79,8 +79,17 @@
             </v-alert>
           </div>
           <div v-if="traceOutput">
+            <v-alert v-if="compareFailed" class="small-alert" type="error" icon="mdi-alert-circle">
+              One or more output variables do not have the expected outcome for the example test case. <br />
+              This indicates there is a mistake in your program.
+            </v-alert>
+            <v-alert v-else-if="compareSuccess" class="small-alert" type="primary" icon="mdi-check">
+              The output variables have the correct values for the example test case. <br />
+              This does not guarantee your program is correct for all test cases. <br />
+              It is your responsibility to make sure the program is correct for all test cases.
+            </v-alert>
             <h4>Your program produced the following output:</h4>
-            <EnvironmentDisplay :data="traceOutput" />
+            <EnvironmentDisplay :data="traceOutput" :reference="question.exampleOutput" :compare="compareResult" />
           </div>
           <div v-if="!traceOutput && !traceError">
             <h4>This tab will contain the output of your program after you test it.</h4>
@@ -150,6 +159,8 @@ import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import BlocklyWorkspace from './BlocklyWorkspace';
 import EnvironmentDisplay from './EnvironmentDisplay.vue';
 import {evalScripts, evalInWorker, evalInWorkerTrace, formatValue} from './blockly_utils';
+
+import compare from '@/util/compare.js';
 
 export default {
   name: 'BlocklyQuestion',
@@ -294,9 +305,7 @@ export default {
           op = this.testOutput[i];
           for (const outputVar of this.outputOrder) {
             if (op.data[outputVar]) {
-              // TODO: pass the question preferences down from the config
-              const decimals = this.question.decimals !== undefined ? this.question.decimals : 1;
-              op.data[outputVar] = formatValue(op.data[outputVar], decimals, this.question.strictStrings);
+              op.data[outputVar] = formatValue(op.data[outputVar], this.decimals, this.question.strictStrings);
             }
           }
         }
@@ -362,13 +371,38 @@ export default {
     running() {
       return this.worker != null;
     },
+    decimals() {
+      return this.question.decimals !== undefined ? this.question.decimals : 1;
+    }, 
     varnames() {
       if (this.question) {
         const {exampleInput, exampleOutput} = this.question;
         return [...Object.keys(exampleInput), ...Object.keys(exampleOutput)];
       }
       return [];
-    }
+    },
+    compareResult() {
+      if (this.traceOutput) {
+        const result = {};
+        for (const [varname, value] of Object.entries(this.question.exampleOutput)) {
+          result[varname] = compare(value, this.traceOutput[varname], this.decimals);
+        }
+        return result;
+      }
+      return null;
+    },
+    compareFailed() {
+      if (this.compareResult && Object.keys(this.compareResult).length > 0) {
+        return Object.values(this.compareResult).some(x => !x);
+      }
+      return false;
+    },
+    compareSuccess() {
+      if (this.compareResult && Object.keys(this.compareResult).length > 0) {
+        return Object.values(this.compareResult).every(x => x);
+      }
+      return false;
+    }    
   },
   watch: {
     fullAnswer() {
@@ -383,7 +417,7 @@ export default {
 
 <style scoped>
 .question-container {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 64px);
 }
 
 .question-main {
@@ -498,6 +532,10 @@ export default {
 
 .run-toolbar-el {
   margin-left: 1em;
+}
+
+.small-alert {
+  max-width: 50em;
 }
 </style>
 

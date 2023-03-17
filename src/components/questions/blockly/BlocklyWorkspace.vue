@@ -118,7 +118,7 @@ export default {
       result += '\n';
       result += '/*Code generated from blocks*/\n';
       return result;
-    }
+    },
   },
   watch: {
       focused() {

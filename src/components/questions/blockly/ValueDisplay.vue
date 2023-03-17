@@ -1,16 +1,16 @@
 <template>
     <span class="value-display">
         <template v-if="typeof data == 'string'">
-            a string "<span class="string-value">{{ data }}</span>"
+            the string "<span class="string-value">{{ data }}</span>"
         </template>
         <template v-else-if="typeof data == 'number'">
-            a number <span class="number-value">{{ data }}</span>
+            the number <span class="number-value">{{ data }}</span>
         </template>
         <template v-else-if="typeof data == 'boolean'">
-            a boolean <span class="boolean-value">{{ data }}</span>
+            the boolean <span class="boolean-value">{{ data }}</span>
         </template>
         <template v-else-if="Array.isArray(data)">
-            a list
+            the list
             <table class="array-value">
                 <tr>
                     <th class="array-value-header" scope="row">Position</th>
