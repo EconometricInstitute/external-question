@@ -90,7 +90,7 @@ export default {
       // TODO enable/disable tracing mode?
     },
     updateVarnames() {
-      if (this.workspace && this.varnames) {
+      if (this.workspace && this.varnames && this.workspace.getAllBlocks().length == 0) {
         const current = new Set(this.workspace.getAllVariableNames());
         for (const varname of this.varnames) {
           if (!current.has(varname)) {

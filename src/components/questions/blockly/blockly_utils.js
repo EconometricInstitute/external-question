@@ -5,13 +5,11 @@ const RAW_CSS = `.blocklySvg {background-color: #fff;outline: none;overflow: hid
 
 function outputCode(data, outputFunction='returnOutput')
 {
-    let res = '$xfdasd_result = {};\n';
-    for (const key of Object.keys(data))
-    {
-        res += 'var tmp = eval(\''+key+'\');\n'
-        res += 'if (tmp != undefined) { $xfdasd_result[\''+key+'\'] = tmp; }\n';
+    let res = `${outputFunction}({\n`;
+    for (const key of Object.keys(data)) {
+        res += `${key},\n`
     }
-    res += outputFunction+'($xfdasd_result);';
+    res += '})';
     return res;
 }
 
@@ -20,7 +18,7 @@ function envToJS(data)
     let res = '';
     for (const key of Object.keys(data))
     {
-        res += 'var '+key+' = ';
+        res += 'let '+key+' = ';
         res += JSON.stringify(data[key]);
         res += ';\n';
     }
@@ -33,8 +31,6 @@ function getSVG(workspace) {
     const canvas = workspace.svgBlockCanvas_.cloneNode(true);
     canvas.removeAttribute("transform");
   
-
-    //console.log(Blockly.Css);
     const css = `<defs><style type="text/css" xmlns="http://www.w3.org/1999/xhtml"><![CDATA[${RAW_CSS}]]></style></defs>`;
     const bboxElement = document.getElementsByClassName("blocklyBlockCanvas")[0];
     const bbox = bboxElement.getBBox();
@@ -65,68 +61,68 @@ function getSVG(workspace) {
     */
 }
 
-function displayEnv(data)
-{
-    let res = '<ul>'
-    for (var i in data)
-    {
-        res += '<li><div>A variable with name <span class="blockly-varname">'+i+'</span> which holds ';
-        res += makehtml(data[i]);
-        res += '</div></li>';
-    }
-    res += '</ul>';
-    return res;
-}
+// function displayEnv(data)
+// {
+//     let res = '<ul>'
+//     for (var i in data)
+//     {
+//         res += '<li><div>A variable with name <span class="blockly-varname">'+i+'</span> which holds ';
+//         res += makehtml(data[i]);
+//         res += '</div></li>';
+//     }
+//     res += '</ul>';
+//     return res;
+// }
 
-function makehtml(data)
-{
-    if (typeof data == 'string')
-    {
-        return 'a string "<span class="blockly-string">'+data+'</span>"';
-    }
-    else if (typeof data == 'number')
-    {
-        return 'a number <span class="blockly-number">'+data+'</span>';
-    }
-    else if (typeof data == 'boolean')
-    {
-        return 'a boolean <span class="blockly-boolean">'+data+'</span>';
-    }
-    else if (Array.isArray(data))
-    {
-        let row1 = '';
-        let row2 = '';
-        for (let i=0; i < data.length; i++)
-        {
-            row1 += '<td class="blockly-table blockly-table-index">'+(i+1)+'</td>';
-            row2 += '<td class="blockly-table blockly-table-value">'+makehtml(data[i])+'</td>';
-        }
-        let res = 'a list <table class="blockly-table"><tr class="blockly-table"><td class="blockly-table">Position</td>';
-        res += row1;
-        res += '</tr><tr class="blockly-table"><td class="blockly-table">Value</td>'+row2+'</tr></table>';
-        return res;
-    }
-    else if (typeof data == 'function')
-    {
-        return 'a function';
-    }
-    else
-    {
-        let row1 = '';
-        let row2 = '';
-        for (const i of Object.keys(data))
-        {
-            row1 += '<td class="blockly-table">'+i+'</td>';
-            row2 += '<td class="blockly-table blockly-table-value">'+makehtml(data[i])+'</td>';
-        }
-        let res = 'an object <table class="blockly-table"><tr class="blockly-table"><td class="blockly-table">Property</td>';
-        res += row1;
-        res += '</tr><tr class="blockly-table"><td class="blockly-table">Value</td>';
-        res += row2;
-        res += '</tr></table>';
-        return res;
-    }
-}
+// function makehtml(data)
+// {
+//     if (typeof data == 'string')
+//     {
+//         return 'a string "<span class="blockly-string">'+data+'</span>"';
+//     }
+//     else if (typeof data == 'number')
+//     {
+//         return 'a number <span class="blockly-number">'+data+'</span>';
+//     }
+//     else if (typeof data == 'boolean')
+//     {
+//         return 'a boolean <span class="blockly-boolean">'+data+'</span>';
+//     }
+//     else if (Array.isArray(data))
+//     {
+//         let row1 = '';
+//         let row2 = '';
+//         for (let i=0; i < data.length; i++)
+//         {
+//             row1 += '<td class="blockly-table blockly-table-index">'+(i+1)+'</td>';
+//             row2 += '<td class="blockly-table blockly-table-value">'+makehtml(data[i])+'</td>';
+//         }
+//         let res = 'a list <table class="blockly-table"><tr class="blockly-table"><td class="blockly-table">Position</td>';
+//         res += row1;
+//         res += '</tr><tr class="blockly-table"><td class="blockly-table">Value</td>'+row2+'</tr></table>';
+//         return res;
+//     }
+//     else if (typeof data == 'function')
+//     {
+//         return 'a function';
+//     }
+//     else
+//     {
+//         let row1 = '';
+//         let row2 = '';
+//         for (const i of Object.keys(data))
+//         {
+//             row1 += '<td class="blockly-table">'+i+'</td>';
+//             row2 += '<td class="blockly-table blockly-table-value">'+makehtml(data[i])+'</td>';
+//         }
+//         let res = 'an object <table class="blockly-table"><tr class="blockly-table"><td class="blockly-table">Property</td>';
+//         res += row1;
+//         res += '</tr><tr class="blockly-table"><td class="blockly-table">Value</td>';
+//         res += row2;
+//         res += '</tr></table>';
+//         return res;
+//     }
+// }
 
 const workerScript =
 `
@@ -150,7 +146,6 @@ const workerScriptURL = URL.createObjectURL(new Blob([workerScript], {type: 'tex
 async function evalScripts(scripts) {
     const worker = new Worker(workerScriptURL);
     const result = new Array(scripts.length);
-    
     const promises = new Array(scripts.length);
     const resolves = new Array(scripts.length);
     for (let t=0; t < scripts.length; t++) {
@@ -162,7 +157,6 @@ async function evalScripts(scripts) {
 
     worker.onmessage = (msg) => {
         const payload = JSON.parse(msg.data);
-        //console.log(payload);
         result[payload.id] = payload;
         resolves[payload.id]();
     };
@@ -260,8 +254,8 @@ export {
     outputCode,
     envToJS,
     getSVG,
-    makehtml,
-    displayEnv,
+    // makehtml,
+    // displayEnv,
     evalInWorker,
     evalInWorkerTrace,
     evalScripts,

@@ -1,4 +1,4 @@
-export default function compare(obj1, obj2, decimals)
+export default function compare(obj1, obj2, decimals, convert=false)
 {
     // If one object is not truthy and the other one is, they are not equal
     if ((obj1 && !obj2) || (!obj1 && obj2)) {
@@ -19,6 +19,27 @@ export default function compare(obj1, obj2, decimals)
     if (obj1 == undefined || obj1 == null || obj2 == null || obj2 == undefined) {
         return false;
     }
+
+	// If one value is a number and the other a string, try converting
+	if (convert) {
+		if (typeof obj1 == 'number' && typeof obj2 == 'string') {
+			try {
+				obj2 = parseFloat(obj2);
+			}
+			catch {
+				return false;
+			}
+		}
+		else if (typeof obj1 == 'string' && typeof obj2 == 'number') {
+			try {
+				obj1 = parseFloat(obj1);
+			}
+			catch {
+				return false;
+			}
+		}
+	}
+
 
     // If they types do not match, the objects are not equal
 	if (typeof obj1 != typeof obj2) {
@@ -55,7 +76,7 @@ export default function compare(obj1, obj2, decimals)
         }
         return true;
 	}
-	
+
     // If the objects have a different number of keys, they are not equal
 	if (Object.keys(obj1).length != Object.keys(obj2).length)
 	{
@@ -69,7 +90,7 @@ export default function compare(obj1, obj2, decimals)
 		{
 			return false;
 		}
-		if (!compare(value, obj2[key], decimals))
+		if (!compare(value, obj2[key], decimals, convert))
 		{
 			return false;
 		}

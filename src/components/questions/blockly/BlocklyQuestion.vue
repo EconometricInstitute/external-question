@@ -79,11 +79,11 @@
             </v-alert>
           </div>
           <div v-if="traceOutput">
-            <v-alert v-if="compareFailed" class="small-alert" type="error" icon="mdi-alert-circle">
+            <v-alert v-if="compareFailed" class="small-alert" type="error">
               One or more output variables do not have the expected outcome for the example test case. <br />
               This indicates there is a mistake in your program.
             </v-alert>
-            <v-alert v-else-if="compareSuccess" class="small-alert" type="primary" icon="mdi-check">
+            <v-alert v-else-if="compareSuccess" class="small-alert" type="info" icon="mdi-check">
               The output variables have the correct values for the example test case. <br />
               This does not guarantee your program is correct for all test cases. <br />
               It is your responsibility to make sure the program is correct for all test cases.
@@ -104,14 +104,17 @@
         </div>
         <div class="iotab" v-if="ioTab == 3">
           <span v-if="testOutput.length == 0">After you run your code, the answer code appears here</span>
-          <v-alert v-if="outputErrors" type="error">
+          <v-alert v-if="outputErrors" type="error" class="small-alert">
             Your program produced an error for at least one testcase.
             This indicates your program is likely incorrect.
           </v-alert>
-          <v-alert v-if="outputMissing" type="warning">
+          <v-alert v-if="outputMissing" type="warning" class="small-alert">
             One of the output variables was missing (undefined) for at least one testcase.
             This indicates your program is likely incorrect.
           </v-alert>
+          <v-alert v-if="!outputErrors && ! outputMissing && compareFailed" type="error" class="small-alert">
+              The example test case is incorrect. This means your answer code is probably incorrect.
+            </v-alert>
           <div v-if="testOutput.length > 0">
             <h4>The following answer code was computed. Click <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon> to copy it to the clipboard</h4>
             <v-text-field class="answercode-box"
@@ -124,7 +127,8 @@
             </v-text-field>
           </div>
           <template v-if="testOutput.length > 0">
-            <h4>The answer code is based on the following output of your program:</h4>
+            <h4>The answer code is based on the following output of your program.</h4>
+            <p>It is <strong>your responsibility</strong> to make sure that your output is correct for <strong>all testcases</strong>.</p>
             <ul>
               <li v-for="e in outputDisplay" :key="'test-'+e.index">
                 <span>With the following inputs:</span>
@@ -197,18 +201,32 @@ export default {
     codeChange(ev) {
       this.code = ev;
     },
-    runTraceCode() {
+    runTraceCode(fast) {
       if (!this.worker) { 
         this.traceOutput = null;
         this.traceError = null;
         this.ioTab = 2;
 
-        const script = this.code.trace;
+        const script = (fast ? this.getTestCode() : this.code.trace) || '';
         if (script) {
-          const highlight = this.$refs.workspace.highlight;
-          const finishTrace = this.finishTrace;
-          const errorTrace = this.errorTrace;
-          this.worker = evalInWorkerTrace(script, highlight, finishTrace, errorTrace);
+          if (fast) {
+            evalInWorker(script)
+              .then(res => {
+                const result = JSON.parse(res);
+                if (!result.error) {
+                  this.traceOutput = result.data;
+                }
+                else {
+                  this.traceError = result.data;
+                }
+              });            
+          }
+          else {
+            const highlight = this.$refs.workspace.highlight;
+            const finishTrace = this.finishTrace;
+            const errorTrace = this.errorTrace;
+            this.worker = evalInWorkerTrace(script, highlight, finishTrace, errorTrace);
+          }
         }
         else {
           this.traceOutput = null;
@@ -233,23 +251,38 @@ export default {
       this.ioTab = 1;
       this.stopTraceCode();
     },
+    getTestCode(testcase=this.question.exampleInput, solution, declr) {
+      const generated = this.code.test || '';
+      if (!solution) {
+        solution = generated.substring(generated.indexOf("\n") + 1).trim() + '\n';
+      }
+      if (!declr) {
+        declr = generated.substring(0, generated.indexOf("\n")).trim() + '\n\n';
+      }
+      let testCode = Object.entries(testcase).map(([k,v]) => k+'='+JSON.stringify(v)).join(';\n')+';\n';
+      testCode += declr;
+      testCode += solution;
+      testCode += this.outputCode;
+      return testCode;
+    },
     submitCode() {
         this.testOutput = [];
+        this.runTraceCode(true);
         this.dirty = true;
         const generated = this.code.test || '';
         const solution = generated.substring(generated.indexOf("\n") + 1).trim() + '\n';
         const declr = generated.substring(0, generated.indexOf("\n")).trim() + '\n\n';
         const scripts = [];
         for (const tc of this.testCases) {
-          let testCode = Object.entries(tc).map(([k,v]) => k+'='+JSON.stringify(v)).join(';\n')+';\n';
-          testCode += declr;
-          testCode += solution;
-          testCode += this.outputCode;
+          const testCode = this.getTestCode(tc, solution, declr);
+          // let testCode = Object.entries(tc).map(([k,v]) => k+'='+JSON.stringify(v)).join(';\n')+';\n';
+          // testCode += declr;
+          // testCode += solution;
+          // testCode += this.outputCode;
           scripts.push(testCode);
         }
         evalScripts(scripts)
         .then(result => {
-          //console.log(result);
           this.testOutput = result;
           this.dirty = false;
           this.ioTab = 3;
@@ -260,8 +293,13 @@ export default {
       evalInWorker(script)
       .then(resStr => {
         const res = JSON.parse(resStr);
-        if (!res.error) {
-          this.testCases = res.data;
+        if (!res.error && Array.isArray(res.data)) {
+          if (res.data.length > 0 && compare(res.data[0], this.question.exampleInput, 1e-6)) {
+            this.testCases = res.data;
+          }
+          else {
+            this.testCases = [this.question.exampleInput, ...res.data];
+          }
         }
         else {
           // TODO: warn the user that there is a problem??
