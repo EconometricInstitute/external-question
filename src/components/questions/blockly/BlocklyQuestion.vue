@@ -72,7 +72,7 @@
         <div v-if="ioTab == 1" class="iotab">
           <div v-if="traceError">
             <h4>Error while running</h4>
-            <v-alert type="error">
+            <v-alert type="error" class="small-alert">
               The following error occurred while your program was tested:
               <br />
               {{traceError}}
@@ -105,16 +105,17 @@
         <div class="iotab" v-if="ioTab == 3">
           <span v-if="testOutput.length == 0">After you run your code, the answer code appears here</span>
           <v-alert v-if="outputErrors" type="error" class="small-alert">
-            Your program produced an error for at least one testcase.
-            This indicates your program is likely incorrect.
+            Your program produced an error for at least one testcase. <br />
+            This indicates your program is likely <strong>incorrect</strong>.
           </v-alert>
-          <v-alert v-if="outputMissing" type="warning" class="small-alert">
-            One of the output variables was missing (undefined) for at least one testcase.
-            This indicates your program is likely incorrect.
+          <v-alert v-else-if="compareFailed" type="error" class="small-alert">
+              The example test case is incorrect. <br />
+              This means your answer code is likely <strong>incorrect</strong>.
           </v-alert>
-          <v-alert v-if="!outputErrors && ! outputMissing && compareFailed" type="error" class="small-alert">
-              The example test case is incorrect. This means your answer code is probably incorrect.
-            </v-alert>
+          <v-alert v-else-if="outputMissing" type="warning" class="small-alert">
+            One of the output variables was missing (undefined) for at least one testcase.<br />
+            This indicates your program is likely <strong>incorrect</strong>.
+          </v-alert>
           <div v-if="testOutput.length > 0">
             <h4>The following answer code was computed. Click <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon> to copy it to the clipboard</h4>
             <v-text-field class="answercode-box"

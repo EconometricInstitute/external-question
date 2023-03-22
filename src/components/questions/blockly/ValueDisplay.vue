@@ -1,6 +1,9 @@
 <template>
     <span class="value-display">
-        <template v-if="typeof data == 'string'">
+        <template v-if="data === undefined || data === null">
+            <span class="missing-value">no value</span>
+        </template>
+        <template v-else-if="typeof data == 'string'">
             the string "<span class="string-value">{{ data }}</span>"
         </template>
         <template v-else-if="typeof data == 'number'">
@@ -57,7 +60,7 @@ export default {
     ],
     components: {
         ValueDisplay: this
-    }
+    },
   };
 </script>
 
@@ -65,6 +68,14 @@ export default {
 .value-display span, .value-display div{
     padding: 0;
 }
+
+.missing-value {
+    font-family: monospace;
+    color: #ff5252;
+    font-weight: bolder;
+    font-size: 120%;
+}
+
 .string-value {
 	font-family: monospace;
 	color: darkgreen;
