@@ -102,7 +102,8 @@ export default {
         type,
         description: '# New Question\n\nWrite a description of the question here in Markdown.',
         defaultAnswer: null,
-        name: 'New Question'
+        name: 'New Question',
+        showExitButton: false
       };
       const newQuestion = questionTypes[type].initialize(base);
       this.$store.commit('setQuestion', newQuestion);

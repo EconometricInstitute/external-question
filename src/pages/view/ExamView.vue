@@ -11,6 +11,14 @@
         <v-icon>mdi-restart</v-icon>
         Restart
       </v-btn>
+      <v-btn v-if="question.exportConfig" :disable="!exportData" class="margin-left" color="secondary" @click="save">
+        <v-icon>mdi-export</v-icon>
+        {{ question.exportConfig.buttonText }}
+      </v-btn>
+      <v-btn v-if="question.showExitButton" class="margin-left" color="error" @click="exit">
+        <v-icon>mdi-export</v-icon>
+        Exit
+      </v-btn>      
     </v-app-bar>
 
     <v-main>
@@ -38,7 +46,7 @@
                  :focused="true"
                  :inputAnswer="answer"
                  @input="setAnswer"
-
+                 ref="main"
       ></component>
     </v-main>
     <SingletonOverlay />
@@ -49,6 +57,14 @@
       type="error"
       :confirm="restartConfirmed"
     />
+    <ConfirmDialog
+      ref="exit"
+      :text="'This will close this browser window. You have to reopen the link to this exercise to be able to return.\n\nAre you sure?'"
+      width="40em"
+      type="error"
+      :confirm="exitConfirmed"
+    />    
+    <ExportDialog v-if="question.exportConfig" :config="question.exportConfig" :data="this.exportData" ref="exportDialog" />
   </v-app>
 </template>
 
@@ -57,8 +73,9 @@ import { mapState, mapGetters } from 'vuex';
 
 import SingletonOverlay from '@/components/SingletonOverlay.vue';
 import ConfirmDialog from '@/components/util/ConfirmDialog.vue'
+import ExportDialog from './ExportDialog.vue';
 
-import types from '@/components/questions';
+import { types, exportAnswer } from '@/components/questions';
 const questionComponents = Object.fromEntries(Object.entries(types).map(([key, value]) => [key, value.view]))
 
 export default {
@@ -67,11 +84,12 @@ export default {
   components: {
     ...questionComponents,
     SingletonOverlay,
-    ConfirmDialog
+    ConfirmDialog,
+    ExportDialog
   },
 
   data: () => ({
-    //
+    exportData: null
   }),
 
   methods: {
@@ -84,6 +102,23 @@ export default {
     restartConfirmed() {
       this.$store.commit('setAnswer', null);
       window.location.reload();
+    },
+    exit() {
+      this.$refs.exit.show();
+    },
+    exitConfirmed() {
+      window.close();
+    },
+    save() {
+      exportAnswer(this.question, this.answer, this.$refs.main)
+      .then(result => {
+        this.exportData = result;
+        this.$refs.exportDialog.show();
+      })
+      .catch(err => {
+        // TODO: expose the error to the user
+        console.log(err);
+      })
     }
   },
 
@@ -92,7 +127,13 @@ export default {
     ...mapGetters(['questionName', 'questionType']),
     unknownType() {
       return !types[this.questionType];
-    }
+    },
   }
 };
 </script>
+
+<style scoped>
+  .margin-left {
+    margin-left: 0.5em;
+  }
+</style>

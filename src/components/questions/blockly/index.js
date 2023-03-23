@@ -16,8 +16,20 @@ function initialize(newQuestion) {
     }
 }
 
-function exportAnswer(question, answer, target) {
-    console.log(question, answer, target);
+function exportAnswer(question, _, component) {
+    return new Promise((resolve, reject) => {
+        try {
+            const config = question.exportConfig;
+            if (config.type == 'file') {
+                // Output file
+                const content = component.generateFile();
+                resolve({ type: 'file', filename: config.filename, contentType: 'text', content});
+            }
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
 }
 
 export default {
@@ -25,5 +37,6 @@ export default {
     view: BlocklyQuestion,
     edit: EditBlocklyQuestion,
     initialize,
-    exportAnswer
+    exportAnswer,
+    defaultExtension: '.html',
 };

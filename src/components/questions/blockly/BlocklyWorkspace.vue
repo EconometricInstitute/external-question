@@ -99,6 +99,9 @@ export default {
           }
         }
       }
+    },
+    getWorkspace() {
+      return this.workspace;
     }
   },
   computed: {

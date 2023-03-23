@@ -1,5 +1,6 @@
 import MultiCodingQuestion from './MultiCodingQuestion';
 import EditMultiCodingQuestion from './EditMultiCodingQuestion';
+import JSZip from 'jszip';
 
 function initialize(newQuestion) {
     return {...newQuestion,
@@ -19,8 +20,21 @@ function initialize(newQuestion) {
     };
 }
 
-function exportAnswer(question, answer, target) {
-    console.log(question, answer, target);
+function exportAnswer(question, answer) {
+    const promises = [];
+    const zip = new JSZip();
+    for (const file of question.files) {
+        const filename = file.filename;
+        const fileContent = answer && answer[filename] ? answer[filename] : file.content;
+        zip.file(filename, fileContent);
+    }
+    return Promise.all(promises).then(
+        () => zip.generateAsync({type: 'blob'})
+    ).then(content => ({
+            filename: question.exportConfig.filename,
+            contentType: 'blob',
+            content
+    }));
 }
 
 export default {
@@ -28,5 +42,6 @@ export default {
     view: MultiCodingQuestion,
     edit: EditMultiCodingQuestion,
     initialize,
-    exportAnswer
+    exportAnswer,
+    defaultExtension: '.zip',
 };

@@ -15,8 +15,18 @@ function initialize(newQuestion) {
     };
 }
 
-function exportAnswer(question, answer, target) {
-    console.log(question, answer, target);
+function exportAnswer(question, answer) {
+    return new Promise((resolve, reject) => {
+        try {
+            const config = question.exportConfig;
+            if (config.type == 'file') {
+                resolve({ type: 'file', filename: config.filename, contentType: 'text', content: answer});
+            }
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
 }
 
 export default {
@@ -24,5 +34,6 @@ export default {
     view: CodingQuestion,
     edit: EditCodingQuestion,
     initialize,
-    exportAnswer
+    exportAnswer,
+    defaultExtension: '.java',
 };

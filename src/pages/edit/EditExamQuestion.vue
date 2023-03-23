@@ -4,6 +4,7 @@
       <v-tab>General</v-tab>
       <v-tab>Description</v-tab>
       <v-tab>Specific</v-tab>
+      <v-tab>Wrap-up</v-tab>
       <v-tabs-items v-model="tab" class="fill-height">
 
         <!-- Regular Question settings -->
@@ -26,6 +27,11 @@
                   <v-text-field label="Question Name" :value="question.name" required @input="updateName"/>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col cols="6">
+                  <v-checkbox v-model="question.showExitButton" label="Show exit button" />
+                </v-col>
+              </v-row>              
             </v-container>
           </v-form>
         </v-tab-item>
@@ -60,6 +66,9 @@
             The question type '{{question.type}}' is unknown.
           </div>
         </v-tab-item>
+        <v-tab-item eager class="fill-height">
+          <ExportConfigTab v-model="question.exportConfig" :question="question" />
+        </v-tab-item>
       </v-tabs-items>
     </v-tabs>
   </div>
@@ -82,6 +91,8 @@ import EditMultiCodingQuestion from '@/components/questions/multicoding/EditMult
 import EditBlocklyQuestion from '@/components/questions/blockly/EditBlocklyQuestion';
 //import EditSpreadsheetQuestion from '@/components/questions/spreadsheet/EditSpreadsheetQuestion';
 
+import ExportConfigTab from './ExportConfigTab.vue';
+
 export default {
   name: 'EditExamQuestion',
   props: [
@@ -91,6 +102,7 @@ export default {
 //    MonacoEditor,
 //    VueMarkdownPlus,
     MarkdownDisplay,
+    ExportConfigTab,
     EditCodingQuestion,
     EditMultiCodingQuestion,
 //    EditSimpleQuestion,

@@ -128,26 +128,28 @@
             </v-text-field>
           </div>
           <template v-if="testOutput.length > 0">
-            <h4>The answer code is based on the following output of your program.</h4>
-            <p>It is <strong>your responsibility</strong> to make sure that your output is correct for <strong>all testcases</strong>.</p>
-            <ul>
-              <li v-for="e in outputDisplay" :key="'test-'+e.index">
-                <span>With the following inputs:</span>
-                  <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
-                    {{val}} = {{JSON.stringify(key)}}
+            <div ref="outputs">
+              <h4>The answer code is based on the following output of your program.</h4>
+              <p>It is <strong>your responsibility</strong> to make sure that your output is correct for <strong>all testcases</strong>.</p>
+              <ul>
+                <li v-for="e in outputDisplay" :key="'test-'+e.index">
+                  <span>With the following inputs:</span>
+                    <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
+                      {{val}} = {{JSON.stringify(key)}}
+                    </span>
+                  <span v-if="!e.output.error">
+                    <span> your program produced the following outputs:</span>
+                    <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
+                      {{val}} = {{JSON.stringify(key)}}
+                    </span>
                   </span>
-                <span v-if="!e.output.error">
-                  <span> your program produced the following outputs:</span>
-                  <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
-                    {{val}} = {{JSON.stringify(key)}}
-                  </span>
-                </span>
-                <span v-if="e.output.error">
-                  <span> your program produced the following error:</span>
-                  <span class="blockly-outputerror">{{e.output.data}}</span>
-                </span>              
-              </li>
-            </ul>
+                  <span v-if="e.output.error">
+                    <span> your program produced the following error:</span>
+                    <span class="blockly-outputerror">{{e.output.data}}</span>
+                  </span>              
+                </li>
+              </ul>
+            </div>
           </template>
         </div>
       </div>
@@ -163,7 +165,7 @@ import copyToClipboard from 'copy-to-clipboard';
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import BlocklyWorkspace from './BlocklyWorkspace';
 import EnvironmentDisplay from './EnvironmentDisplay.vue';
-import {evalScripts, evalInWorker, evalInWorkerTrace, formatValue} from './blockly_utils';
+import {evalScripts, evalInWorker, evalInWorkerTrace, formatValue, generateFile} from './blockly_utils';
 
 import compare from '@/util/compare.js';
 
@@ -311,6 +313,12 @@ export default {
     copyAnswerCode() {
       copyToClipboard(this.answerCode);
       this.copyBar = true;
+    },
+    generateFile() {
+      // function generateFile(workspace, answer, answerlog, rawCode, exampleIncorrect, hasUndefined) {
+      const workspace = this.$refs.workspace.getWorkspace();
+      const answerlog = this.$refs.outputs ? this.$refs.outputs.innerHTML : '';
+      return generateFile(workspace, this.answerCode, answerlog, this.code.display, this.compareFailed, this.outputMissing )
     }
   },
   computed: {
