@@ -160,7 +160,7 @@
 <script>
 //import VueMarkdownPlus from 'vue-markdown-plus';
 import * as md5hex from 'md5-hex';
-import copyToClipboard from 'copy-to-clipboard';
+import { copyText } from '@/util/clipboard.js';
 
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import BlocklyWorkspace from './BlocklyWorkspace';
@@ -311,7 +311,7 @@ export default {
       });
     },
     copyAnswerCode() {
-      copyToClipboard(this.answerCode);
+      copyText(this.answerCode);
       this.copyBar = true;
     },
     generateFile() {

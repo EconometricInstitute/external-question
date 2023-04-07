@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import copyToClipboard from 'copy-to-clipboard';
+import { copyText } from '@/util/clipboard.js';
 
 export default {
   name: 'ExportDialog',
@@ -57,7 +57,7 @@ export default {
       this.visible = false;
     },  
     copy() {
-        copyToClipboard(this.data);
+        copyText(this.data);
         this.copied = true;
     },
     download() {

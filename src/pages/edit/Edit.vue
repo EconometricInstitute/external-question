@@ -70,7 +70,8 @@
 import { v4 as uuidv4 } from 'uuid';
 // import { Base64 } from 'js-base64';
 import { pack } from '@/util/hashtools.js';
-import copyToClipboard from 'copy-to-clipboard';
+//import copyToClipboard from 'copy-to-clipboard';
+import { copyHtml, copyText } from '@/util/clipboard.js';
 
 import { mapState } from 'vuex';
 
@@ -150,7 +151,8 @@ export default {
 
     },
     copyLink() {
-      copyToClipboard(this.questionLink);
+      //copyToClipboard(this.questionLink);
+      copyText(this.questionLink);
       this.snackbar = true;
       this.snackbarText = 'Link copied to the clipboard. You can paste the link where it is needed.';
     },
@@ -162,8 +164,8 @@ export default {
       else {
         text = `<p>You have to make this assignment on <a href="${this.questionLink}" target="_blank">an external website</a>.`;
       }
-      
-      copyToClipboard(text, { format: 'text/html'});
+      copyHtml(text);
+      //copyToClipboard(text, { format: 'text/html'});
       this.snackbar = true;
       this.snackbarText = 'Text copied to the clipboard. You can paste this text for example into Ans or Canvas.';
     }
