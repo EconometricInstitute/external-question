@@ -52,19 +52,22 @@
 
         <!-- Question Type Specific -->
         <v-tab-item eager class="fill-height">
-          <EditCodingQuestion v-if="question.type == 'coding'" :value="question" @input="updateQuestion"
-            :focused="focused && tab == 2" />
-          <EditMultiCodingQuestion v-else-if="question.type == 'multicoding'" :value="question" @input="updateQuestion"
-            :focused="focused && tab == 2" />
-          <!-- <EditSimpleQuestion v-else-if="question.type == 'simple'" :value="question" @input="updateQuestion"
-            :focused="focused && tab == 2" /> -->
-          <EditBlocklyQuestion v-else-if="question.type == 'blockly'" :value="question" @input="updateQuestion"
-            :focused="focused && tab == 2" />
-          <!-- <EditSpreadsheetQuestion v-else-if="question.type == 'spreadsheet'" :value="question" @input="updateQuestion"
-            :focused="focused && tab == 2" />             -->
-          <div v-else>
-            The question type '{{question.type}}' is unknown.
-          </div>
+          <v-container v-if="unknownType">
+            <v-row>
+              <v-col>
+                  <v-alert type="error">
+                    <h3>Unknown question type: {{ question.type }}</h3>
+                </v-alert>
+              </v-col>
+            </v-row>
+          </v-container>          
+          <component v-else
+                 :is="question.type"
+                 :question="question"
+                 :focused="tab == 2"
+                 @input="updateQuestion"
+                 ref="main"
+          ></component>
         </v-tab-item>
         <v-tab-item eager class="fill-height">
           <ExportConfigTab v-model="question.exportConfig" :question="question" />
@@ -85,11 +88,8 @@ import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/markdown/markdown.js'
 
-import EditCodingQuestion from '@/components/questions/coding/EditCodingQuestion';
-import EditMultiCodingQuestion from '@/components/questions/multicoding/EditMultiCodingQuestion';
-//import EditSimpleQuestion from '@/components/questions/simple/EditSimpleQuestion';
-import EditBlocklyQuestion from '@/components/questions/blockly/EditBlocklyQuestion';
-//import EditSpreadsheetQuestion from '@/components/questions/spreadsheet/EditSpreadsheetQuestion';
+import { types } from '@/components/questions';
+const questionEditors = Object.fromEntries(Object.entries(types).map(([key, value]) => [key, value.edit]))
 
 import ExportConfigTab from './ExportConfigTab.vue';
 
@@ -99,16 +99,10 @@ export default {
     'question', 'index', 'focused'
   ],
   components: {
-//    MonacoEditor,
-//    VueMarkdownPlus,
     MarkdownDisplay,
     ExportConfigTab,
-    EditCodingQuestion,
-    EditMultiCodingQuestion,
-//    EditSimpleQuestion,
-    EditBlocklyQuestion,
-//    EditSpreadsheetQuestion,
-    codemirror
+    codemirror,
+    ...questionEditors
   },
   data: () => ({
     tab: 0,
@@ -159,6 +153,11 @@ export default {
         }
       })
     }
+  },
+  computed: {
+    unknownType() {
+      return !types[this.question.type];
+    },
   }
 };
 </script>
