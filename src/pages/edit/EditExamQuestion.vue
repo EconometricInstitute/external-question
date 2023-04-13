@@ -63,7 +63,7 @@
           </v-container>          
           <component v-else
                  :is="question.type"
-                 :question="question"
+                 :value="question"
                  :focused="tab == 2"
                  @input="updateQuestion"
                  ref="main"
