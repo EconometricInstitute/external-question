@@ -2,11 +2,13 @@
 import blockly from './blockly';
 import coding from './coding';
 import multicoding from './multicoding';
+import hyperformula from './hyperformula';
 
 export const types = {
      blockly,
      coding,
-     multicoding
+     multicoding,
+     hyperformula
 };
 
 export function exportAnswer(question, answer, component) {
