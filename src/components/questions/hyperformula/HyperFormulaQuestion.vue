@@ -17,24 +17,7 @@
         </v-tab-item>
         <v-tab-item v-for="sheet of sheets" :key="sheet.name">
           <div class="spreadsheet-wrapper">
-            <table class="spreadsheet">
-                <thead>
-                  <tr>
-                    <th scope="col" class="spreadsheet-triangle-cell"><div class="spreadsheet-triangle"></div></th>
-                    <th scope="col" class="column-label" v-for="j of sheet.dimensions.width" :key="'col-'+j">{{ getColumnLabel(j) }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="i of sheet.dimensions.height" :key="'row-'+i">
-                    <th scope="row">{{ i }}</th>
-                    <td v-for="j of sheet.dimensions.width" :key="'cell-'+i+'-'+j">
-                      <span v-if="sheet.values[i-1]">
-                        {{ sheet.values[i-1][j-1] }}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-            </table>
+            <SpreadsheetTable :value="sheet" />
           </div>
           <!-- {{ sheet }}
           <br />
@@ -72,26 +55,7 @@
           <v-card class="answer-card" v-if="question?.answerSpec">
             <v-card-title>Final Answer</v-card-title>
             <v-card-text>
-              <p>The following answer code was computed. Click <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon> to copy it to the clipboard.</p>
-              <v-text-field class="answercode-box"
-                            readonly solo dense
-                            :value="answerCode"
-              >
-                <template v-slot:prepend-inner>
-                    <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon>
-                </template>
-              </v-text-field>
-              <v-snackbar v-model="copyBar" centered>
-                The answer code was copied to the clipboard
-                <template v-slot:action="{ attrs }">
-                  <v-btn color="primary"
-                  text
-                  v-bind="attrs"
-                  @click="copyBar = false">
-                  OK
-                  </v-btn>
-                </template>
-              </v-snackbar>
+              <AnswerCodeDisplay :answerCode="answerCode" />
             </v-card-text>
           </v-card>
       </div>
@@ -102,8 +66,8 @@
 <script>
 import { HyperFormula } from 'hyperformula';
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
-
-import { copyText } from '@/util/clipboard.js';
+import AnswerCodeDisplay from '@/components/util/AnswerCodeDisplay';
+import SpreadsheetTable from './SpreadsheetTable';
 
 export default {
   name: 'HyperFormulaQuestion',
@@ -112,6 +76,8 @@ export default {
   ],
   components: {
     MarkdownDisplay,
+    AnswerCodeDisplay,
+    SpreadsheetTable
   },
   created() {
     this.updateWorkbook();
@@ -189,19 +155,6 @@ export default {
       }
       this.answerCode = parts.join(answerSpec.separator);
     },
-    getColumnLabel(index) {
-      let result = '';
-      while(index >= 0) {
-        const charCode = (index % 26) + 96;
-        result = String.fromCharCode(charCode).toUpperCase() + result;
-        index = Math.floor(index / 26) - 1;
-      }
-      return result;
-    },
-    copyAnswerCode() {
-      copyText(this.answerCode);
-      this.copyBar = true;
-    }
   },
   computed: {
     fullAnswer() {
@@ -269,7 +222,6 @@ export default {
     formulas: [],
     errors: [],
     sheets: [],
-    copyBar: false,
     answerCode: ''
   }),
 };
