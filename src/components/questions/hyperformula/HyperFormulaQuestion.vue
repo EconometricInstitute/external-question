@@ -203,9 +203,20 @@ export default {
       this.copyBar = true;
     }
   },
+  computed: {
+    fullAnswer() {
+      return {
+        shortAnswer: this.answerCode,
+        formulas: this.formulas
+      };
+    }
+  },
   watch: {
     question() {
       this.updateWorkbook();
+    },
+    fullAnswer(newAnswer) {
+      this.$emit('input', newAnswer);
     },
     formulas(newFormulas) {
       for (let index=0; index < this.question.tasks.length; index++) {
