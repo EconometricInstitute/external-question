@@ -8,12 +8,15 @@
         </thead>
         <tbody>
             <tr v-for="i of value.dimensions.height" :key="'row-'+i">
-            <th scope="row">{{ i }}</th>
-            <td v-for="j of value.dimensions.width" :key="'cell-'+i+'-'+j">
-                <span v-if="value.values[i-1]">
-                {{ value.values[i-1][j-1] }}
-                </span>
-            </td>
+                <th scope="row">{{ i }}</th>
+                <td v-for="j of value.dimensions.width"
+                    :key="'cell-'+i+'-'+j"
+                    :contenteditable="editable"
+                    @input="$ev => cellChanged($ev, i-1, j-1)">
+                    <template v-if="value.values[i-1]">
+                    {{ value.values[i-1][j-1] }}
+                    </template>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -23,7 +26,7 @@
 export default {
   name: 'SpreadsheetTable',
   props: [
-    'value'
+    'value', 'editable'
   ],
   methods: {
     getColumnLabel(index) {
@@ -35,6 +38,11 @@ export default {
       }
       return result;
     },
+    cellChanged(event, row, column) {
+        console.log(event, row, column);
+        this.value.values[row][column] = event.target.innerText;
+        this.$emit('input', this.value);
+    }
   }
 }
 </script>
