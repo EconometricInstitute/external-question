@@ -2,7 +2,7 @@
   <div class="question-container">
     <div class="question-editor" v-if="sheets">
       <v-tabs v-model="currentTab" class="question-tabs">
-        <v-tab>
+        <v-tab v-if="question?.descriptionAsTab">
           <v-icon dense>mdi-file-document</v-icon> &nbsp; Description
         </v-tab>
         <v-tab v-for="sheet of sheets" :key="sheet.name" class="question-tab">
@@ -12,21 +12,29 @@
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="currentTab">
-        <v-tab-item>
-          <MarkdownDisplay class="question-text" :source="question.description" />
+        <v-tab-item v-if="question?.descriptionAsTab">
+          <div class="description">
+            <MarkdownDisplay class="question-text" :source="question.description" />
+          </div>
         </v-tab-item>
         <v-tab-item v-for="sheet of sheets" :key="sheet.name">
           <div class="spreadsheet-wrapper">
             <SpreadsheetTable :value="sheet" />
           </div>
-          <!-- {{ sheet }}
-          <br />
-          {{  question  }} -->
         </v-tab-item>
       </v-tabs-items>
     </div>
     <div class="rhs">
       <div class="question-instruction">
+        <div class="rhs-part" v-if="!question?.descriptionAsTab">
+          <v-card class="descr-card">
+            <v-card-title>Description</v-card-title>
+            <v-card-text>
+              <MarkdownDisplay class="question-text" :source="question.description" />
+            </v-card-text>
+          </v-card>
+        </div>
+        <div class="rhs-part" v-if="question.tasks && question.tasks.length > 0">
           <h3>Tasks</h3>
           <v-card class="task-card" v-for="(task, index) in question.tasks" :key="'task-'+index">
             <v-card-title>{{ 'Task ' + (index+1) }} <span v-if="task.title">&nbsp;-&nbsp;{{ task.title }}</span></v-card-title>
@@ -52,12 +60,34 @@
                 </template>
             </v-card-text>
           </v-card>
+        </div>
+        <div class="rhs-part" v-if="question?.answerSpec?.entries && question.answerSpec.entries.length > 0">
+          <h3>Answer code</h3>
           <v-card class="answer-card" v-if="question?.answerSpec">
             <v-card-title>Final Answer</v-card-title>
             <v-card-text>
+              <div>The final answer is based on the following information:</div>
+              <ul>
+                <li v-for="(entry, index) in question?.answerSpec?.entries" :key="'entry-'+index">
+                  <span v-if="entry.type == 'range-values'">
+                    The <em>values</em> in range <code>{{ entry.source }}</code>
+                  </span>
+                  <span v-else-if="entry.type == 'range-formulas'">
+                    The <em>formulas</em> in range <code>{{ entry.source }}</code>                  
+                  </span>
+                  <span v-else-if="entry.type == 'range-hash'">
+                    A <em>hash</em> computed with the values in range <code>{{ entry.source }}</code>
+                  </span>
+                  <span v-else-if="entry.type == 'formula'">
+                    The result of the formula <code>{{ entry.formula }}</code>
+                  </span>
+                </li>
+              </ul>
+              <br />
               <AnswerCodeDisplay :answerCode="answerCode" />
             </v-card-text>
           </v-card>
+        </div>
       </div>
     </div>
   </div>
@@ -68,6 +98,8 @@ import { HyperFormula } from 'hyperformula';
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import AnswerCodeDisplay from '@/components/util/AnswerCodeDisplay';
 import SpreadsheetTable from './SpreadsheetTable';
+
+import { computeAnswerCode } from './utils';
 
 export default {
   name: 'HyperFormulaQuestion',
@@ -122,38 +154,40 @@ export default {
     },
     updateAnswerCode() {
       const answerSpec = this.question?.answerSpec;
-      if (!answerSpec) {
-        this.answerCode = '';
-      }
-      const wb = this.workbook;
-      const parts = [];
-      for (const spec of answerSpec.entries) {
-        const address = spec.cell ? wb.simpleCellAddressFromString(spec.cell, -1) : undefined;
-        if (spec.type == 'cell-formula') {
-          if (wb.doesCellHaveFormula(address)) {
-            let formula = wb.getCellFormula(address);
-            parts.push(formula);
-          }
-          else {
-            parts.push('#NO_FORMULA!');
-          }
-        }
-        else if (spec.type == 'cell-value') {
-          const value = wb.getCellValue(address);
-          if (value && value.type && value.value) {
-            parts.push(value.value);
-          }
-          else {
-            if (!value) {
-              parts.push('#NO_VALUE;');
-            }
-            else {
-              parts.push(value);
-            }
-          }
-        }
-      }
-      this.answerCode = parts.join(answerSpec.separator);
+      this.answerCode = computeAnswerCode(answerSpec, this.workbook);
+      // if (!answerSpec) {
+      //   this.answerCode = '';
+      // }
+      // const wb = this.workbook;
+      // const parts = [];
+      // for (const spec of answerSpec.entries) {
+      //   // TODO: determine if we have a range or a single cell
+      //   const address = spec.source ? wb.simpleCellAddressFromString(spec.cell, -1) : undefined;
+      //   if (spec.type == 'range-formulas') {
+      //     if (wb.doesCellHaveFormula(address)) {
+      //       let formula = wb.getCellFormula(address);
+      //       parts.push(formula);
+      //     }
+      //     else {
+      //       parts.push('#NO_FORMULA!');
+      //     }
+      //   }
+      //   else if (spec.type == 'range-values') {
+      //     const value = wb.getCellValue(address);
+      //     if (value && value.type && value.value) {
+      //       parts.push(value.value);
+      //     }
+      //     else {
+      //       if (!value) {
+      //         parts.push('#NO_VALUE!');
+      //       }
+      //       else {
+      //         parts.push(value);
+      //       }
+      //     }
+      //   }
+      // }
+      // this.answerCode = parts.join(answerSpec.separator);
     },
   },
   computed: {
@@ -228,7 +262,13 @@ export default {
 </script>
 
 <style scoped>
-div.task-card, div.answer-card {
+div.description {
+  margin: 1em;
+}
+.rhs-part {
+  margin-bottom: 1em;
+}
+div.descr-card, div.task-card, div.answer-card {
   margin-top: 1em;
 }
 div.spreadsheet-wrapper {

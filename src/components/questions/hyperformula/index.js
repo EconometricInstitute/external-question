@@ -1,35 +1,48 @@
 import HyperFormulaQuestion from './HyperFormulaQuestion.vue';
 import EditHyperFormulaQuestion from './EditHyperFormulaQuestion';
 
+import { BASE_ENTRY } from './utils.js';
+
 function initialize(newQuestion) {
     return {...newQuestion,
-        sheets: { 'Sheet1' : [
-                [1.0, 2.5, 3.0, 'Hello', 'World', 7.0, '=A2+A3', 'Some value', ''],
-                [2.0, 3.5, 4.0, 'More Messages', 'Go Here', 16.0, '=B2+B3', 'Other value', ''],
-                ['', '', '', '' , '', '' , '', ''],
-                ['Sum of cells', '']
-            ]},
+        sheets: { 'Sales' : [
+                    ['CustomerID', 'Product Name', 'Quantity', 'Price', 'Revenue'],
+                    [51236, 'Soap', 12, 1.50, ''],
+                    [73452, 'Onions', 8, 0.25, ''],
+                    [25623, 'Iceberg Lettuce', 2, 1.25, ''],
+                    [92834, 'Coffee', 12, 1.99, ''],
+                    ['', '', '', '', ''],
+                    ['Average Revenue', '', '', '']
+                ],
+            },
         namedRanges: [],
         tasks: [
-            { title: 'Sum all',
-                description: 'Write a formula for cell `B4` that adds up the numbers in cells `A1:B3`',
-                targetSheetName: 'Sheet1',
-                targetCell: 'B4',
-                defaultFormula: ''
-            },
-            { title: 'Sum per row',
-                description: 'Write a formula for cell `I1` that adds up the values in the first, second and third column such that it can be copied to cell `I2`',
-                targetSheetName: 'Sheet1',
-                targetCell: 'I1',
+            {
+                title: 'Compute revenue',
+                description: 'Write a formula for cell `E2` that computes the revenue as the product of price and quantity.',
+                targetSheetName: 'Sales',
+                targetCell: 'E2',
                 defaultFormula: '',
-                copyTo: ['I2']
-            }
+                copyTo: ['E3:E5']
+            },
+            {
+                title: 'Average revenue',
+                description: 'Write a formula for cell `B7` that computes the average revenue of the products.',
+                targetSheetName: 'Sales',
+                targetCell: 'B7',
+                defaultFormula: '',
+                copyTo: []
+            }            
         ],
         answerSpec: {
-            separator: ' :: ',
+            entrySeparator: ' :: ',
+            valueSeparator: '-',
+            hashSeparator: ':|:',
             entries: [
-                { type: 'cell-formula', cell: 'Sheet1!B4' },
-                { type: 'cell-value', cell: 'Sheet1!I1' }
+                { ...BASE_ENTRY, type: 'range-hash', source: 'Sales!E2:E5', decimals: 2, truncate: false, iterations: 1 },
+                { ...BASE_ENTRY, type: 'range-values', source: 'Sales!B7', decimals: 2, truncate: false },
+                { ...BASE_ENTRY, type: 'range-formulas', source: 'Sales!E2' },
+                { ...BASE_ENTRY, type: 'range-formulas', source: 'Sales!B7' },
             ]
         }
     }
