@@ -57,17 +57,6 @@
       </div>
     </div>
     <div class="question-io">
-      <v-snackbar v-model="copyBar" centered>
-        The answer code was copied to the clipboard
-        <template v-slot:action="{ attrs }">
-          <v-btn color="primary"
-          text
-          v-bind="attrs"
-          @click="copyBar = false">
-          OK
-        </v-btn>
-        </template>
-      </v-snackbar>
       <v-tabs class="question-iotabs" background-color="secondary" dark
         v-model="ioTab">
         <v-tabs-slider color="white"></v-tabs-slider>
@@ -137,17 +126,7 @@
             One of the output variables was missing (undefined) for at least one testcase.<br />
             This indicates your program is likely <strong>incorrect</strong>.
           </v-alert>
-          <div v-if="testOutput.length > 0">
-            <h4>The following answer code was computed. Click <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon> to copy it to the clipboard</h4>
-            <v-text-field class="answercode-box"
-                          readonly solo dense
-                          :value="answerCode"
-            >
-              <template v-slot:prepend-inner>
-                  <v-icon @click="copyAnswerCode">mdi-content-copy</v-icon>
-              </template>
-            </v-text-field>
-          </div>
+          <AnswerCodeDisplay v-if="testOutput.length > 0" :answerCode="answerCode" />
           <template v-if="testOutput.length > 0">
             <div ref="outputs">
               <h4>The answer code is based on the following output of your program.</h4>
@@ -181,9 +160,10 @@
 <script>
 //import VueMarkdownPlus from 'vue-markdown-plus';
 import * as md5hex from 'md5-hex';
-import { copyText } from '@/util/clipboard.js';
 
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
+import AnswerCodeDisplay from '@/components/util/AnswerCodeDisplay';
+
 import BlocklyWorkspace from './BlocklyWorkspace';
 import EnvironmentDisplay from './EnvironmentDisplay.vue';
 import {evalScripts, evalInWorker, evalInWorkerTrace, formatValue, generateFile} from './blockly_utils';
@@ -198,6 +178,7 @@ export default {
   components: {
     //VueMarkdownPlus,
     MarkdownDisplay,
+    AnswerCodeDisplay,
     BlocklyWorkspace,
     EnvironmentDisplay
   },
@@ -210,7 +191,6 @@ export default {
     traceOutput: null,
     traceError: null,
     testCases: null,
-    copyBar: false
   }),
   created() {
     if (this.inputAnswer) {
@@ -330,10 +310,6 @@ export default {
           console.log('Error while generating testCases: '+res.data);
         }
       });
-    },
-    copyAnswerCode() {
-      copyText(this.answerCode);
-      this.copyBar = true;
     },
     generateFile() {
       // function generateFile(workspace, answer, answerlog, rawCode, exampleIncorrect, hasUndefined) {
