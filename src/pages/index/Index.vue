@@ -1,11 +1,22 @@
 <!--
-This file is part of External-Question.
-
-External-Question is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-External-Question is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along with External-Question. If not, see https://www.gnu.org/licenses/
+ * This file is part of External-Question.
+ * It is a single page web static web-application for advanced exercises related to computer skills.
+ * 
+ * Copyright (C) 2023 Paul Bouman
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see https://www.gnu.org/licenses/
+ *
 -->
 
 <template>
@@ -70,6 +81,11 @@ export default {
         name: 'List Threshold',
         type: 'blockly',
         data: 'eJzlWm1T4zYQ_isa90s7EyAvvF1Kb4aXcJdpIDch0HaOm6DYcqKeLbmSfJBh-O9dSSaJE-IYcGjuys1wWNpd7fNotVrJvnciPAo49pz6vRPHFP53KtX-3l51b3-jVnGrG9t73s7Gfq3ib7j93VrV2625xN13So4aRQSk-wF3vwYjaPCIdAWNFOUM2n9CLSoV6g4FkUMeeNfsmrV9RRiiCnHXjYVEaogVuiVoQBRSHPG-JOIbQRgFWhUzDw0xPEOXR1zqEXQ7pO4QkYCEhCmJKAMTxEpHWErQdIlQGNr7WJSMBavCGZHI44hxtak9ORYEKz3SkXUfRYIPBA6tS9h1SaS0uW9YUNwPCLphcdgnQt4gDYaywaOX3EdJlx0Poxv1iPkG9IOYbKKmQtAQB572l-nBvNglKfvaf-I9Zb7PeUAwk9aYRLdUDQ1uiUOSDK7lxrRgabopi2JlrYy934QJIRNJ0BoPnDjYB1-UiMkNor4x43IBcCLOjFuJqqZ-QgmVaGAIFZo_hrhA5J8YB3rmtIk5RgxTNz4OJIzDQUTcUgk86ak5jYVuCLkgJTTisRjPTeLhmD0YKFYa44RFl8dM3dhZpOCxC05J4PQWhZiNNF7tDwAQlJj4GcPHAgINcG-aSPZxHKhDJm-JcOosDoKSw4BtiOt0VIMwucNhFJCmZluvooQVp_55r7Rd2i1VyqWdL7Bcxir1nYexVtsA0GrWD9DSTpQMNSXz5_gXGDHwnPo2GFAQFX1-Bx4d3IUBot5v149t1w6SahQQaPGojAI8qkPgM3LtvL9mCH4ONC0DLkZWDZ5afEBd0HN5AIxDW7VShkeNGR6S3kQb9M2iRzoDaHUOdPJA9qgPMgdbpnOBbKAt9VweRsB3TmkeEYF1Vskpz8gA4OUUThZXXtMQCTlFYTEwLEZz0gdbj-RnTAaP5PRkVKqpyTC9yyZDkAhWZI_cqSlZkLbrL7HVbZ41LlL9ICGH2IMFkxgMsRr2bEzPCIKoTwksyMTY-eUZSFTKB1umOW10y1qd9mTLuDLBkUnqGBfk84BcMkWXT8RYx-cig4TTTvusYA5eSMHc9LTXZG5mHTv6az0Iyz__DewOnxEwAb_tSQUL0-yTL1nEZ0BBKqHWptaw7VzgRZq8bI-NLOx-ahgSlcrRs1N2uB4zNhdJ6-FWDpYllD8ByWDYelAgmHerAwP1z-AtoWzvrA4LrFpYqkzlWyzW6R4UkVBWqFE2CUeNTq_b7h1_bBz_Xiwhq9klLR9Qgg-yAvWk0equSTrIAUdAzeu9ZazWNleIJoSzS8CzJqd51TxpnJ8Ui2l3u6B8rd27aHfWpC7Jmx0EpiyD86vD1mWjWEg7RZVarfYf67FUZx372PzwsegwWGEcCMw8HvYoyzoP_Z-OAqvnGqpoPL8r56idu-bUOnX-3Z2qnbvpI216eGU7s33UQr2_OV1-6jeSOIpI5g7UbfzZzZ6dsVuvZNf4ExA2SB0fXpDO1Oy9wHycJKhw311JoBgoVDbCKLMIKxTLCoEwj9y1_ecCSRl6vMWUvQFZBujqUG_BeuinMaUdXp5eTpvLKo41iRgobsVhVgpfL55zIAInLuI-1ChwvszAddHtNM8_fE_A7DnkGMuss0ju3PlfBx7MT_gj4IhEdgn0HQHhsHcsu-BeQzR53gBQqVJvAKrTFVDSu4Ac_cJP9lzzPq6n3xWm6QljZV6mIKpIKEG-bDbGx-acM_DUIHk07FuJtzzNr-biyaIZV2J5hCe1Th5pyOBNXVO88U6nB1_FhmBByeWgWs2LuQW71pjs9q3__pFQySigWYBOGq3mkoWaP7GWVrhEJRcvOoIem8ybSsFTGVj3ioUZ2Kr0Iup-zfEKJ5G2Z-bc0oN-xux0GgVfH778tmDWtQ-dRuN8Ta_ajgq_BVzVu3ATA5AuMq8ljtut9mWnko1oNlazMFmDIPST75fLhYWENVtdhZ81-PH9gvzsHHabBd_ClTeLKU_mE5okkb5ugt-LMtzV45YzneRq5i21G0vFQ7vVNA-PWo1J5pvSep8jjZ7GzNVlZbqYfZca5FOnfdw4uexMjTKlNjvKwdZdGLzX3x8SqfTh8sJ8dOjUHT9R0p8TdpNO-fMv6H7CoiAqFgx9nib7Pvlgq45SH2yh8QdbdbTzUFqosZPovFZj79kalWdrVMsLVQxso5cXyCKNxUBqpRoo7MO_16vsL1QxwiWj-OpRtp-vUivSsYUqAH-i8Fzl7aeVv_x6zR7M148uDXEgnXq55Oh7KVddmNspaLHfJTpDLIcdEkFDxT60zEkIHsv2-ZMgPtUfJ945Dw__AjnXKtE',
+      },
+      {
+        name: 'Sales Data',
+        type: 'hyperformula',
+        data: 'eJzNVNtq20AQ_ZXt9lU2sRw7jqAPubhgCGkbB_qQGDJejaSl8q66l7gm9b93VhdfaKDkJRSMJc1tZ845Oy-8gk2pIeXJC_de0pOPxTg-ETDuxcvBuHeKZ1lvgqOsNxDxyRjEEAaDIY-421RI0QU9TKbNypdA1hStMLJyUityfmRzKNGya3DwqB7VTDFXILOVQUhtgeiYg2WJbKM9E6BYJlXahNR5KeUxnTFgdgVlyazTBskPjgksS8uEXq10Kt2G5VqnlgGl50YLNBJtn80oTisHUlEtmWVoUDmmTYrGRmxd0DdDEEVj2seGDmbX4eTwJjyduyL_utBsqX1euNpeGZ164aL6Q8EKu4Qjx08PyoUOK29EARbTussmTgr6p8ptRj-AdE-eXEPJJDWiw4iVd1gnGHxG5ZuUuuVoVwue0UC-DwmoEWLdrN5KlTOo6KBKgjvmoKXP9msCM_Clu1B2jYYnypdlxMNwROeeTAq0hV5Pf0l36Z0LZGdQWgxmqmiDnOponjw88KsWwNk15X1tRmW3oWbEv7Xw1B6Cg553zQh8ET2MBvFwHPG5hopHgzga9EcRD46z4ekojvgXRUKzPJpEJ_24dcWjcTyM-EzgEk3ObtA5H-qG7C7mPJ4MTyN-pUkT2FY-P298nFrY_4LhosW2a2zvXGwbcNI7UHk97YJuBtgf4fWF02BlAO6q5dDsChzfk-9Gkhc6IsKzFjh7msZPrd6bEvZIB2AP9RY4byQVRNHpLpDqwOTo5oGa2wMqd54rOouM03gvgM_tlU74pxOyCl1t7jUNxafDZDriNPh-vItj7b1hvMuz18Z7RcsHY9o3THR59u-JFlviDGq9zysUQbq0JcxmjhUYoI1DGSxJGOU8Q-nx0N4jI93p4tCW_E7IGkpIbGSQopC0v-iDJEtQUGQt22TQZN-gyl3Bkwl1b7wSdD9396kzdDGUImiJHPjliicUhbuVbIIWe6FwuKaa1s4Onw_TOLAXyNs3xcM6f6-2agjt340RU8ddvSNU3f57Da7_sauA1WK73f4B3_CYSw'
       }
     ]
   })
