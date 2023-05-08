@@ -23,12 +23,14 @@ import blockly from './blockly';
 import coding from './coding';
 import multicoding from './multicoding';
 import hyperformula from './hyperformula';
+import pivot from './pivot';
 
 export const types = {
      blockly,
      coding,
      multicoding,
-     hyperformula
+     hyperformula,
+     pivot
 };
 
 export function exportAnswer(question, answer, component) {
