@@ -28,7 +28,7 @@
         <v-btn @click="addTask" color="primary"><v-icon>mdi-plus</v-icon> Task</v-btn>
       </v-toolbar>
       <v-card-text v-if="value" class="d-flex">
-        <v-card v-for="(task, index) in value" :key="task.title" class="task-card">
+        <v-card v-for="(task, index) in value" :key="'task-'+index" class="task-card">
           <v-card-title>Task {{ index + 1}}
             <v-spacer />
             <v-btn color="error" text @click="deleteTask(index)"><v-icon>mdi-delete</v-icon> Task</v-btn>
