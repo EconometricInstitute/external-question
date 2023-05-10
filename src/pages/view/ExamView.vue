@@ -15,6 +15,9 @@ You should have received a copy of the GNU Affero General Public License along w
       color="primary"
       dark
     >
+      <v-btn v-if="devModeActive" class="mx-2" fab dark small color="secondary" :href="editUrl" target="_blank">
+        <v-icon dark>mdi-pencil</v-icon>
+      </v-btn>
       <h3>{{ questionName }}</h3>
       <v-spacer></v-spacer>
       <v-btn color="error" @click="restart">
@@ -138,6 +141,18 @@ export default {
     unknownType() {
       return !types[this.questionType];
     },
+    devModeActive() {
+      if (window?.localStorage?.DEV_MODE_ACTIVE) {
+        return true;
+      }
+      return false;
+    },
+    editUrl() {
+      const loc = window.location;
+      const path = loc.pathname;
+      const altPath = path.substring(0, path.length - 9) + 'edit.html';
+      return `${loc.protocol}//${loc.host}${altPath}${loc.search}${loc.hash}`;
+    }
   }
 };
 </script>

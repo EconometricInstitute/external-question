@@ -50,6 +50,11 @@
                 <a target="_blank" :href="'edit.html#'+demo.data">question editor</a>
               </li>
             </ul>
+            <br />
+            <h3>Development Mode</h3>
+            <p>Enable development mode to include an edit button in the questions viewer. This is useful if you want to edit questions to which you only have a link.</p>
+            <p><strong>Note:</strong> this will only become active after reloading the page of the question.</p>
+            <v-checkbox v-model="devMode" label="Development mode active" />
           </v-col>
         </v-row>
       </v-container>
@@ -58,6 +63,8 @@
 </template>
 
 <script>
+const DEV_MODE = window?.localStorage?.DEV_MODE_ACTIVE;
+
 export default {
   name: 'Index',
   data: () => ({
@@ -87,7 +94,18 @@ export default {
         type: 'hyperformula',
         data: 'eJzNVNtq20AQ_ZXt9lU2sRw7jqAPubhgCGkbB_qQGDJejaSl8q66l7gm9b93VhdfaKDkJRSMJc1tZ845Oy-8gk2pIeXJC_de0pOPxTg-ETDuxcvBuHeKZ1lvgqOsNxDxyRjEEAaDIY-421RI0QU9TKbNypdA1hStMLJyUityfmRzKNGya3DwqB7VTDFXILOVQUhtgeiYg2WJbKM9E6BYJlXahNR5KeUxnTFgdgVlyazTBskPjgksS8uEXq10Kt2G5VqnlgGl50YLNBJtn80oTisHUlEtmWVoUDmmTYrGRmxd0DdDEEVj2seGDmbX4eTwJjyduyL_utBsqX1euNpeGZ164aL6Q8EKu4Qjx08PyoUOK29EARbTussmTgr6p8ptRj-AdE-eXEPJJDWiw4iVd1gnGHxG5ZuUuuVoVwue0UC-DwmoEWLdrN5KlTOo6KBKgjvmoKXP9msCM_Clu1B2jYYnypdlxMNwROeeTAq0hV5Pf0l36Z0LZGdQWgxmqmiDnOponjw88KsWwNk15X1tRmW3oWbEv7Xw1B6Cg553zQh8ET2MBvFwHPG5hopHgzga9EcRD46z4ekojvgXRUKzPJpEJ_24dcWjcTyM-EzgEk3ObtA5H-qG7C7mPJ4MTyN-pUkT2FY-P298nFrY_4LhosW2a2zvXGwbcNI7UHk97YJuBtgf4fWF02BlAO6q5dDsChzfk-9Gkhc6IsKzFjh7msZPrd6bEvZIB2AP9RY4byQVRNHpLpDqwOTo5oGa2wMqd54rOouM03gvgM_tlU74pxOyCl1t7jUNxafDZDriNPh-vItj7b1hvMuz18Z7RcsHY9o3THR59u-JFlviDGq9zysUQbq0JcxmjhUYoI1DGSxJGOU8Q-nx0N4jI93p4tCW_E7IGkpIbGSQopC0v-iDJEtQUGQt22TQZN-gyl3Bkwl1b7wSdD9396kzdDGUImiJHPjliicUhbuVbIIWe6FwuKaa1s4Onw_TOLAXyNs3xcM6f6-2agjt340RU8ddvSNU3f57Da7_sauA1WK73f4B3_CYSw'
       }
-    ]
-  })
+    ],
+    devMode: DEV_MODE
+  }),
+  watch: {
+    devMode() {
+      if (this.devMode) {
+        window.localStorage['DEV_MODE_ACTIVE'] = true;
+      }
+      else {
+        delete window.localStorage['DEV_MODE_ACTIVE'];
+      }
+    }
+  }
 };
 </script>
