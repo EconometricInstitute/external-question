@@ -40,7 +40,7 @@
         </v-tab-item>
         <v-tab-item v-for="sheet of sheets" :key="sheet.name">
           <div class="spreadsheet-wrapper">
-            <SpreadsheetTable :value="sheet" />
+            <SpreadsheetTable max-height="calc(98vh - 110px)" :value="sheet" />
           </div>
         </v-tab-item>
       </v-tabs-items>

@@ -32,27 +32,29 @@
         <v-chip label disabled class="address-chip" small>{{ currentAddress }}</v-chip>
       </template>
     </v-text-field>
-    <table class="spreadsheet">
-        <thead>
-            <tr>
-            <th scope="col" class="spreadsheet-triangle-cell"><div class="spreadsheet-triangle"></div></th>
-            <th scope="col" class="column-label" v-for="j of value.dimensions.width" :key="'col-'+j">{{ getColumnLabel(j) }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="i of value.dimensions.height" :key="'row-'+i">
-                <th scope="row">{{ i }}</th>
-                <td v-for="j of value.dimensions.width"
-                    :key="'cell-'+i+'-'+j"
-                    @click="setCurrent(i-1, j-1)"
-                    :class="getStyleClasses(i-1, j-1)">
-                    <template v-if="value.values[i-1]">
-                    {{ value.values[i-1][j-1] }}
-                    </template>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div :style="tableStyle">
+      <table class="spreadsheet">
+          <thead>
+              <tr>
+              <th scope="col" class="spreadsheet-triangle-cell"><div class="spreadsheet-triangle"></div></th>
+              <th scope="col" class="column-label" v-for="j of value.dimensions.width" :key="'col-'+j">{{ getColumnLabel(j) }}</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr v-for="i of value.dimensions.height" :key="'row-'+i">
+                  <th scope="row">{{ i }}</th>
+                  <td v-for="j of value.dimensions.width"
+                      :key="'cell-'+i+'-'+j"
+                      @click="setCurrent(i-1, j-1)"
+                      :class="getStyleClasses(i-1, j-1)">
+                      <template v-if="value.values[i-1]">
+                      {{ value.values[i-1][j-1] }}
+                      </template>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -60,7 +62,7 @@
 export default {
   name: 'SpreadsheetTable',
   props: [
-    'value', 'editable', 'locked'
+    'value', 'editable', 'locked', 'max-height'
   ],
   data:() => ({
     currentCell: null
@@ -182,6 +184,13 @@ export default {
       }
       const values = this.value.values;
       return values[this.currentCell.row][this.currentCell.col];
+    },
+    tableStyle() {
+      if (this.maxHeight) {
+        console.log('height!');
+        return { 'max-height' : this.maxHeight, 'overflow-y' : 'scroll' };
+      }
+      return {};
     }
   }
 }

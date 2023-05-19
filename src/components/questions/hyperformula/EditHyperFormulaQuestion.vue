@@ -36,6 +36,8 @@
       </v-card-title>
       <v-toolbar class="elevation-0">
         <v-btn @click="addSheet" color="primary"><v-icon>mdi-plus</v-icon> Sheet</v-btn>
+        &nbsp;
+        <v-btn @click="importSheet" color="primary"><v-icon>mdi-import</v-icon> File</v-btn>
       </v-toolbar>
       <v-card-text>
         <template v-if="value.sheets">
@@ -48,7 +50,7 @@
           </v-tabs>
           <v-tabs-items v-model="currentTab">
             <v-tab-item v-for="sheet of wrappedSheets" :key="'content-'+sheet.name">
-              <SpreadsheetTable :value="sheet" @input="updateSheet" editable="true" />
+              <SpreadsheetTable max-height="35vh" :value="sheet" @input="updateSheet" editable="true" />
               <v-toolbar class="elevation-0">
                 <v-btn color="primary" @click="$event => addRow(sheet)"><v-icon>mdi-plus</v-icon> Row</v-btn>
                 <v-btn color="primary" @click="$event => addColumn(sheet)"><v-icon>mdi-plus</v-icon> Column</v-btn>
@@ -69,6 +71,8 @@
     <EditTasks class="tasks-card" v-model="value.tasks" :sheetnames="sheetnames" />
 
     <EditAnswerSpec class="answer-card" v-model="value.answerSpec" :currentSheet="currentSheetName" />
+
+    <input style="display: none;" type="file" ref="fileInput" accept=".xlsx,.xls,.csv" @change="importChosen" />
   </div>
 </template>
 
@@ -78,6 +82,7 @@ import EditAnswerSpec from './EditAnswerSpec.vue'
 
 import SpreadsheetTable from './SpreadsheetTable.vue';
 
+import { Workbook } from 'exceljs';
 
 export default {
   name: 'EditHyperFormulaQuestion',
@@ -97,6 +102,51 @@ export default {
   methods: {
     valueChanged() {
       this.$emit('input', this.value);
+    },
+    importSheet() {
+      this.$refs.fileInput.click();
+    },
+    importChosen(fileEvent) {
+      if (fileEvent.target.files[0]) {
+        const file = fileEvent.target.files[0];
+        const reader = new FileReader();
+        reader.onload = e => {
+          try {
+            const wb = new Workbook();
+            const data = e.target.result;
+            const newData = {};
+            wb.xlsx.load(data)
+            .then(
+              res => {
+                for (const sheet of res.worksheets) {
+                  const name = sheet.name;
+                  const matrix = [];
+                  console.log(name);
+                  sheet.eachRow(row => {
+                    row.eachCell(cell => {
+                      const rowIdx = cell.row - 1;
+                      const colIdx = cell.col - 1;
+                      let entry = cell.value;
+                      if (cell.formula) {
+                        entry = '=' + cell.formula;
+                      }
+                      if (!matrix[rowIdx]) {
+                          matrix[rowIdx] = [];
+                        }  
+                      matrix[rowIdx][colIdx] = entry;
+                    })
+                  })
+                  newData[name] = matrix;
+                }
+                this.$set(this.value, 'sheets', newData);
+            });
+          }
+          catch(err) {
+            console.log(err);
+          }
+        }
+        reader.readAsArrayBuffer(file);
+      }
     },
     addSheet() {
       const sheetName = prompt('Enter a name for the new sheet');
@@ -225,6 +275,7 @@ export default {
 </script>
 
 <style scoped>
+
 div.answer-entry-card:not(:first-child) {
   margin-left: 1em;
 }
