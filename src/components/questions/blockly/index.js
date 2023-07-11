@@ -33,7 +33,8 @@ function initialize(newQuestion) {
         strictStrings: false,
         hashReps: 1,
         hashLength: 10,
-        hashPrefix: 'x'
+        hashPrefix: 'x',
+        autoDownload: false,
     }
 }
 

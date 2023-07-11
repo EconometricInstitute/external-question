@@ -23,7 +23,7 @@ import * as Blockly from 'blockly';
 //import 'blockly';
 // const RAW_CSS = `.blocklySvg {background-color: #fff;outline: none;overflow: hidden;display: block;}.blocklyWidgetDiv {display: none;position: absolute;z-index: 99999;}.injectionDiv {height: 100%;position: relative;}.blocklyNonSelectable {user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}.blocklyTooltipDiv {background-color: #ffffc7;border: 1px solid #ddc;box-shadow: 4px 4px 20px 1px rgba(0,0,0,.15);color: #000;display: none;font-family: sans-serif;font-size: 9pt;opacity: 0.9;padding: 2px;position: absolute;z-index: 100000;}.blocklyResizeSE {cursor: se-resize;fill: #aaa;}.blocklyResizeSW {cursor: sw-resize;fill: #aaa;}.blocklyResizeLine {stroke: #888;stroke-width: 1;}.blocklyHighlightedConnectionPath {fill: none;stroke: #fc3;stroke-width: 4px;}.blocklyPathLight {fill: none;stroke-linecap: round;stroke-width: 1;}.blocklySelected&gt;.blocklyPath {stroke: #fc3;stroke-width: 3px;}.blocklySelected&gt;.blocklyPathLight {display: none;}.blocklyDragging&gt;.blocklyPath,.blocklyDragging&gt;.blocklyPathLight {fill-opacity: .8;stroke-opacity: .8;}.blocklyDragging&gt;.blocklyPathDark {display: none;}.blocklyDisabled&gt;.blocklyPath {fill-opacity: .5;stroke-opacity: .5;}.blocklyDisabled&gt;.blocklyPathLight,.blocklyDisabled&gt;.blocklyPathDark {display: none;}.blocklyText {cursor: default;fill: #fff;font-family: sans-serif;font-size: 11pt;}.blocklyNonEditableText&gt;text {pointer-events: none;}.blocklyNonEditableText&gt;rect,.blocklyEditableText&gt;rect {fill: #fff;fill-opacity: .6;}.blocklyNonEditableText&gt;text,.blocklyEditableText&gt;text {fill: #000;}.blocklyEditableText:hover&gt;rect {stroke: #fff;stroke-width: 2;}.blocklyBubbleText {fill: #000;}.blocklyFlyoutButton {fill: #888;cursor: default}.blocklyFlyoutButton:hover {fill: #ccc;}.blocklySvg text {user-select: none;-moz-user-select: none;-webkit-user-select: none;cursor: inherit;}.blocklyHidden {display: none;}.blocklyFieldDropdown:not(.blocklyHidden) {display: block;}.blocklyIconGroup {cursor: default;}.blocklyIconGroup:not(:hover),.blocklyIconGroupReadonly {opacity: .6;}.blocklyIconShape {fill: #00f;stroke: #fff;stroke-width: 1px;}.blocklyIconSymbol {fill: #fff;}.blocklyMinimalBody {margin: 0;padding: 0;}.blocklyCommentTextarea {background-color: #ffc;border: 0;margin: 0;padding: 2px;resize: none;}.blocklyHtmlInput {border: none;border-radius: 4px;font-family: sans-serif;height: 100%;margin: 0;outline: none;padding: 0 1px;width: 100%}.blocklyMainBackground {stroke-width: 1;stroke: #c6c6c6;}.blocklyMutatorBackground {fill: #fff;stroke: #ddd;stroke-width: 1;}.blocklyFlyoutBackground {fill: #ddd;fill-opacity: .8;}.blocklyScrollbarBackground {opacity: 0;}.blocklyScrollbarHandle {fill: #ccc;}.blocklyScrollbarBackground:hover+.blocklyScrollbarHandle,.blocklyScrollbarHandle:hover {fill: #bbb;}.blocklyZoom&gt;image {opacity: .4;}.blocklyZoom&gt;image:hover {opacity: .6;}.blocklyZoom&gt;image:active {opacity: .8;}.blocklyFlyout .blocklyScrollbarHandle {fill: #bbb;}.blocklyFlyout .blocklyScrollbarBackground:hover+.blocklyScrollbarHandle,.blocklyFlyout .blocklyScrollbarHandle:hover {fill: #aaa;}.blocklyInvalidInput {background: #faa;}.blocklyAngleCircle {stroke: #444;stroke-width: 1;fill: #ddd;fill-opacity: .8;}.blocklyAngleMarks {stroke: #444;stroke-width: 1;}.blocklyAngleGauge {fill: #f88;fill-opacity: .8;}.blocklyAngleLine {stroke: #f00;stroke-width: 2;stroke-linecap: round;}.blocklyContextMenu {border-radius: 4px;}.blocklyDropdownMenu {padding: 0 !important;}.blocklyWidgetDiv .goog-option-selected .goog-menuitem-checkbox,.blocklyWidgetDiv .goog-option-selected .goog-menuitem-icon {background: url(&lt;&lt;&lt;PATH&gt;&gt;&gt;/sprites.png) no-repeat -48px -16px !important;}.blocklyToolboxDiv {background-color: #ddd;overflow-x: visible;overflow-y: auto;position: absolute;}.blocklyTreeRoot {padding: 4px 0;}.blocklyTreeRoot:focus {outline: none;}.blocklyTreeRow {height: 22px;line-height: 22px;margin-bottom: 3px;padding-right: 8px;white-space: nowrap;}.blocklyHorizontalTree {float: left;margin: 1px 5px 8px 0;}.blocklyHorizontalTreeRtl {float: right;margin: 1px 0 8px 5px;}.blocklyToolboxDiv[dir="RTL"] .blocklyTreeRow {margin-left: 8px;}.blocklyTreeRow:not(.blocklyTreeSelected):hover {background-color: #e4e4e4;}.blocklyTreeSeparator {border-bottom: solid #e5e5e5 1px;height: 0;margin: 5px 0;}.blocklyTreeSeparatorHorizontal {border-right: solid #e5e5e5 1px;width: 0;padding: 5px 0;margin: 0 5px;}.blocklyTreeIcon {background-image: url(&lt;&lt;&lt;PATH&gt;&gt;&gt;/sprites.png);height: 16px;vertical-align: middle;width: 16px;}.blocklyTreeIconClosedLtr {background-position: -32px -1px;}.blocklyTreeIconClosedRtl {background-position: 0px -1px;}.blocklyTreeIconOpen {background-position: -16px -1px;}.blocklyTreeSelected&gt;.blocklyTreeIconClosedLtr {background-position: -32px -17px;}.blocklyTreeSelected&gt;.blocklyTreeIconClosedRtl {background-position: 0px -17px;}.blocklyTreeSelected&gt;.blocklyTreeIconOpen {background-position: -16px -17px;}.blocklyTreeIconNone,.blocklyTreeSelected&gt;.blocklyTreeIconNone {background-position: -48px -1px;}.blocklyTreeLabel {cursor: default;font-family: sans-serif;font-size: 16px;padding: 0 3px;vertical-align: middle;}.blocklyTreeSelected .blocklyTreeLabel {color: #fff;}.blocklyWidgetDiv .goog-palette {outline: none;cursor: default;}.blocklyWidgetDiv .goog-palette-table {border: 1px solid #666;border-collapse: collapse;}.blocklyWidgetDiv .goog-palette-cell {height: 13px;width: 15px;margin: 0;border: 0;text-align: center;vertical-align: middle;border-right: 1px solid #666;font-size: 1px;}.blocklyWidgetDiv .goog-palette-colorswatch {position: relative;height: 13px;width: 15px;border: 1px solid #666;}.blocklyWidgetDiv .goog-palette-cell-hover .goog-palette-colorswatch {border: 1px solid #FFF;}.blocklyWidgetDiv .goog-palette-cell-selected .goog-palette-colorswatch {border: 1px solid #000;color: #fff;}.blocklyWidgetDiv .goog-menu {background: #fff;border-color: #ccc #666 #666 #ccc;border-style: solid;border-width: 1px;cursor: default;font: normal 13px Arial, sans-serif;margin: 0;outline: none;padding: 4px 0;position: absolute;overflow-y: auto;overflow-x: hidden;max-height: 100%;z-index: 20000;}.blocklyWidgetDiv .goog-menuitem {color: #000;font: normal 13px Arial, sans-serif;list-style: none;margin: 0;padding: 4px 7em 4px 28px;white-space: nowrap;}.blocklyWidgetDiv .goog-menuitem.goog-menuitem-rtl {padding-left: 7em;padding-right: 28px;}.blocklyWidgetDiv .goog-menu-nocheckbox .goog-menuitem,.blocklyWidgetDiv .goog-menu-noicon .goog-menuitem {padding-left: 12px;}.blocklyWidgetDiv .goog-menu-noaccel .goog-menuitem {padding-right: 20px;}.blocklyWidgetDiv .goog-menuitem-content {color: #000;font: normal 13px Arial, sans-serif;}.blocklyWidgetDiv .goog-menuitem-disabled .goog-menuitem-accel,.blocklyWidgetDiv .goog-menuitem-disabled .goog-menuitem-content {color: #ccc !important;}.blocklyWidgetDiv .goog-menuitem-disabled .goog-menuitem-icon {opacity: 0.3;-moz-opacity: 0.3;filter: alpha(opacity=30);}.blocklyWidgetDiv .goog-menuitem-highlight,.blocklyWidgetDiv .goog-menuitem-hover {background-color: #d6e9f8;border-color: #d6e9f8;border-style: dotted;border-width: 1px 0;padding-bottom: 3px;padding-top: 3px;}.blocklyWidgetDiv .goog-menuitem-checkbox,.blocklyWidgetDiv .goog-menuitem-icon {background-repeat: no-repeat;height: 16px;left: 6px;position: absolute;right: auto;vertical-align: middle;width: 16px;}.blocklyWidgetDiv .goog-menuitem-rtl .goog-menuitem-checkbox,.blocklyWidgetDiv .goog-menuitem-rtl .goog-menuitem-icon {left: auto;right: 6px;}.blocklyWidgetDiv .goog-option-selected .goog-menuitem-checkbox,.blocklyWidgetDiv .goog-option-selected .goog-menuitem-icon {background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -512px 0;}.blocklyWidgetDiv .goog-menuitem-accel {color: #999;direction: ltr;left: auto;padding: 0 6px;position: absolute;right: 0;text-align: right;}.blocklyWidgetDiv .goog-menuitem-rtl .goog-menuitem-accel {left: 0;right: auto;text-align: left;}.blocklyWidgetDiv .goog-menuitem-mnemonic-hint {text-decoration: underline;}.blocklyWidgetDiv .goog-menuitem-mnemonic-separator {color: #999;font-size: 12px;padding-left: 4px;}.blocklyWidgetDiv .goog-menuseparator {border-top: 1px solid #ccc;margin: 4px 0;padding: 0;}`;
 
-const ADDITIONAL_CSS = `\n.blocklyToolboxDiv {background: rgba(0, 0, 0, 0.05);}.blocklyMainBackground {stroke:none !important;}.blocklyTreeLabel, .blocklyText, .blocklyHtmlInput {font-family:'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;}.blocklyText { font-size:1rem !important;}.rtl .blocklyText {text-align:right;} .blocklyTreeLabel { font-size:1.25rem !important;} .blocklyCheckbox {fill: #ff3030 !important;text-shadow: 0px 0px 6px #f00;font-size: 17pt !important;}`;
+const ADDITIONAL_CSS = `\n.blocklyToolboxDiv {background: rgba(0, 0, 0, 0.05);}.blocklyMainBackground {stroke:none !important;}.blocklyTreeLabel, .blocklyText, .blocklyHtmlInput {font-family:'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace !important;}.blocklyText { font-size:1rem !important;}.rtl .blocklyText {text-align:right;} .blocklyTreeLabel { font-size:1.25rem !important;} .blocklyCheckbox {fill: #ff3030 !important;text-shadow: 0px 0px 6px #f00;font-size: 17pt !important;} .blockly-varname {	font-family: monospace;	font-weight: bold;	font-size: 130%; background-color: whitesmoke; } .blockly-string {font-family: monospace; color: darkgreen; font-size: 110%; } .blockly-number { font-family: monospace; color: royalblue; font-size: 120%;} .blockly-boolean { font-family: monospace;	font-weight: bold; color: darkmagenta; font-size: 120%;	} .blockly-inputs, .blockly-outputs {  border-style: dotted;   border-width: 1px;   padding-left: 5px;   padding-right: 5px; }  .blockly-inputvalue, .blockly-outputvalue { font-family: monospace;  font-size: 105%; } .blockly-outputerror { margin-left: 0.8em;  font-family: monospace;  font-size: 105%;  color: red; }`;
 
 function outputCode(data, outputFunction='returnOutput')
 {
@@ -276,7 +276,7 @@ function formatValue(value, fixedLength=0, strictStrings=false) {
     return value;
 }
 
-function generateFile(workspace, answer, answerlog, rawCode,exampleIncorrect, hasUndefined) {
+function generateFile(workspace, answer, outputs, rawCode,exampleIncorrect, hasUndefined) {
     const dom = Blockly.Xml.workspaceToDom(workspace);
     const xml = Blockly.Xml.domToText(dom);
     const {svg, style} = getSVG(workspace);
@@ -296,19 +296,59 @@ function generateFile(workspace, answer, answerlog, rawCode,exampleIncorrect, ha
 		}
 		html_text += '</ul>\n</div>';
 	}
-	html_text += '\n<div id=\'answer-log\'>';
-	html_text += answerlog;
-	html_text += '</div><div style="display: none">\n';
+	html_text += '<div style="display: none">\n';
 	html_text += Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
-	html_text += '\n</div>\n'
+	html_text += '</div>\n'
 	html_text += '<div>\n<h3>Blockly Generated Javascript Code</h3>\n<pre><code>\n';
 	html_text += new Option(rawCode).innerHTML;
 	html_text += '\n</code></pre>\n</div>\n';
 	html_text += '\n<div>\n<h3>Raw Blockly Workspace</h3>\n<textarea cols="100" rows="10" readonly="true">\n';
 	html_text += new Option(xml).innerHTML;
 	html_text += '\n</textarea>\n</div>\n';
+	html_text += '\n<div id=\'answer-log\'>';
+	html_text += generateOutputs(outputs);
+    html_text += '</div>\n';
 	html_text += '</body>\n</html>';
 	return html_text;
+}
+
+function generateOutputs(outputs) {
+    let result = `
+    <div>
+        <h4>The answer code is based on the following output of your program.</h4>
+        <p>It is <strong>your responsibility</strong> to make sure that your output is correct for <strong>all testcases</strong>.</p>
+        <ul>\n`;
+    for (const e of outputs) {
+        result += `
+        <li>
+            <span>With the following inputs:</span>\n`;
+        for (const [k,v] of Object.entries(e.input)) {
+            result += `
+            <span class="blockly-inputvalue">
+                ${k} = ${JSON.stringify(v)}
+            </span>\n`;
+        }
+        if (!e.output.error) {
+            result += `
+                <span> your program produced the following outputs:</span>
+            `
+            for (const [k,v] of Object.entries(e.output.data)) {
+                result += `
+                <span class="blockly-outputvalue">
+                    ${k} = ${JSON.stringify(v)}
+                </span>\n`;
+            }
+        }
+        if (e.output.error) {
+            result += `
+                <span> your program produced the following error:</span>
+                <span class="blockly-outputerror">${e.output.data}</span>\n`;
+        }
+        result +='\t\t\t</li>\n';
+    }
+    result += '\t\t</ul>\n\t</div>\n';
+    return result;
+    
 }
 
 

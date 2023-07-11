@@ -55,6 +55,7 @@
           <v-text-field class="short-field" label="Answer code prefix" v-model="value.hashPrefix" @input="updateHashLength"/>
           <v-text-field class="short-field" label="Answer code repetitions" v-model="value.hashReps" min="1" type="number" @input="updateHashReps"/>
           <v-text-field class="short-field" label="Answer code length" v-model="value.hashLength" min="1" type="number" @input="updateHashLength"/>
+          <v-checkbox v-model="value.autoDownload" label="Automatically download a copy of the answer file upon submitting" />
         </v-col>
       </v-row>
     </v-container>

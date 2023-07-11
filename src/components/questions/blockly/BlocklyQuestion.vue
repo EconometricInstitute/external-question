@@ -170,6 +170,8 @@ import {evalScripts, evalInWorker, evalInWorkerTrace, formatValue, generateFile}
 
 import compare from '@/util/compare.js';
 
+const FILE_NAME_REGEX = /[^A-Za-z0-9_.-]+/g;
+
 export default {
   name: 'BlocklyQuestion',
   props: [
@@ -290,6 +292,9 @@ export default {
           this.testOutput = result;
           this.dirty = false;
           this.ioTab = 3;
+          if (this.question?.autoDownload) {
+            this.saveFile();
+          }
         });
     },
     refreshTestcases() {
@@ -314,8 +319,19 @@ export default {
     generateFile() {
       // function generateFile(workspace, answer, answerlog, rawCode, exampleIncorrect, hasUndefined) {
       const workspace = this.$refs.workspace.getWorkspace();
-      const answerlog = this.$refs.outputs ? this.$refs.outputs.innerHTML : '';
-      return generateFile(workspace, this.answerCode, answerlog, this.code.display, this.compareFailed, this.outputMissing )
+      return generateFile(workspace, this.answerCode, this.outputDisplay, this.code.display, this.compareFailed, this.outputMissing )
+    },
+    saveFile() {
+      const fileContent = this.generateFile();
+      const exportName = 'z_Perusal_'+this.question.name+'-'+this.answerCode+'.answer';
+      const filename = exportName.replaceAll(FILE_NAME_REGEX, '_');
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:application/data;charset=utf-8,' + encodeURIComponent(fileContent));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     }
   },
   computed: {
