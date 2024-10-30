@@ -184,7 +184,7 @@ export default {
         const element = document.createElement('a');
         const now = new Date();
         const filename =  this.question.name.replaceAll(/[^a-zA-Z0-9_-]+/g, '_')
-          + '-' + `${now.getFullYear()}${now.getMonth()}${now.getDay()}_${now.getHours()}_${now.getMinutes()}`
+          + '-' + `${now.getFullYear()}_${now.getMonth()}_${now.getDay()}_${now.getHours()}_${now.getMinutes()}`
           + '.' + this.question.type + '.answer.json';
         element.setAttribute('href', 'data:application/data;charset=utf-8,' + encodeURIComponent(data));
         element.setAttribute('download', filename);
