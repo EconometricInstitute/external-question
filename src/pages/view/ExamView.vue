@@ -26,9 +26,18 @@
       color="primary"
       dark
     >
-      <v-btn v-if="devModeActive" class="mx-2" fab dark small color="secondary" :href="editUrl" target="_blank">
-        <v-icon dark>mdi-pencil</v-icon>
-      </v-btn>
+      <template v-if="devModeActive">
+        <v-btn class="mx-2" fab dark small color="secondary" :href="editUrl" target="_blank">
+          <v-icon dark>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn v-if="devModeActive" class="mx-2" fab dark small color="secondary" @click="exportCurrentAnswer" >
+          <v-icon dark>mdi-download</v-icon>
+        </v-btn>
+        <v-btn v-if="devModeActive" class="mx-2" fab dark small color="secondary" @click="importCurrentAnswer">
+          <v-icon dark>mdi-import</v-icon>
+        </v-btn>
+        &nbsp;
+      </template>    
       <h3>{{ questionName }}</h3>
       <v-spacer></v-spacer>
       <v-btn color="error" @click="restart">
@@ -72,6 +81,19 @@
                  @input="setAnswer"
                  ref="main"
       ></component>
+      <v-snackbar centered v-model="snackbar" :timeout="3000">
+      {{ snackbarText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="primary"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>      
     </v-main>
     <SingletonOverlay />
     <ConfirmDialog
@@ -87,8 +109,17 @@
       width="40em"
       type="error"
       :confirm="exitConfirmed"
-    />    
+    />
+    <ConfirmDialog
+      v-if="devModeActive"
+      ref="loadAnswer"
+      :text="`The imported answer is for a different question with name ${loadAnswerQuestionName}. Importing it is at your own risk.\n\nAre you sure?`"
+      width="40em"
+      type="warning"
+      :confirm="confirmLoadAnswer"
+    />        
     <ExportDialog v-if="question.exportConfig" :config="question.exportConfig" :data="this.exportData" ref="exportDialog" />
+    <input v-if="devModeActive" style="display: none;" type="file" ref="fileInputAnswer" :accept="question.type+'.answer.json'" @change="importChosenAnswer" />    
   </v-app>
 </template>
 
@@ -113,11 +144,15 @@ export default {
   },
 
   data: () => ({
-    exportData: null
+    exportData: null,
+    snackbar: false,
+    snackbarText: '',
+    loadAnswer: null,
+    loadAnswerQuestionName: '',
   }),
-
   methods: {
     setAnswer(ans) {
+      console.log(ans);
       this.$store.commit('setAnswer', ans);
     },
     restart() {
@@ -143,6 +178,62 @@ export default {
         // TODO: expose the error to the user
         console.log(err);
       })
+    },
+    exportCurrentAnswer() {
+        const data = JSON.stringify({answer: this.answer, uuid: this.question.uuid, type: this.question.type, name: this.question.name});
+        const element = document.createElement('a');
+        const now = new Date();
+        const filename =  this.question.name.replaceAll(/[^a-zA-Z0-9_-]+/g, '_')
+          + '-' + `${now.getFullYear()}${now.getMonth()}${now.getDay()}_${now.getHours()}_${now.getMinutes()}`
+          + '.' + this.question.type + '.answer.json';
+        element.setAttribute('href', 'data:application/data;charset=utf-8,' + encodeURIComponent(data));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    },
+    importCurrentAnswer() {
+      this.loadAnswer = null;
+      this.$refs.fileInputAnswer.click();
+    },
+    importChosenAnswer(fileEvent) {
+      if (fileEvent.target.files[0]) {
+        const file = fileEvent.target.files[0];
+        const reader = new FileReader();
+        reader.onload = e => {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (!data.answer) {
+              this.snackbar = true;
+              this.snackbarText = 'The imported file does not contain a proper answer. Make sure you open the correct file.\n';
+              return;
+            }
+            this.loadAnswer = data.answer;
+            if (data.uuid == this.question.uuid) {
+              this.confirmLoadAnswer();
+            }
+            else if (data.type == this.question.type) {
+              this.loadAnswer = data.answer;
+              this.$refs.loadAnswer.show();
+            }
+            else {
+              this.snackbar = true;
+              this.snackbarText = 'The imported file contains an answer for a different question type. The answers are not compatible.\n';
+            }
+          }
+          catch(err) {
+            console.log(err);
+            this.snackbar = true;
+            this.snackbarText = 'An error occurred while importing the file.\n'+err;
+          }
+        }
+        reader.readAsText(file);
+      }
+    },
+    confirmLoadAnswer() {
+      this.setAnswer(this.loadAnswer);
+      window.location.reload();
     }
   },
 
