@@ -44,11 +44,11 @@
         <v-icon>mdi-restart</v-icon>
         Restart
       </v-btn>
-      <v-btn v-if="question.exportConfig" :disable="!exportData" class="margin-left" color="secondary" @click="save">
+      <v-btn v-if="question?.exportConfig" :disable="!exportData" class="margin-left" color="secondary" @click="save">
         <v-icon>mdi-export</v-icon>
         {{ question.exportConfig.buttonText }}
       </v-btn>
-      <v-btn v-if="question.showExitButton" class="margin-left" color="error" @click="exit">
+      <v-btn v-if="question?.showExitButton" class="margin-left" color="error" @click="exit">
         <v-icon>mdi-export</v-icon>
         Exit
       </v-btn>      
@@ -57,7 +57,7 @@
     <v-main>
       <v-container v-if="unknownType">
         <v-row>
-          <v-col>
+          <v-col v-if="!loading">
             <v-alert color="error">
               <template v-if="loadError">
                 <h3>Error while loading data</h3>
@@ -70,6 +70,10 @@
                 <h3>No question data to display</h3>
               </template>
             </v-alert>
+          </v-col>
+          <v-col v-else>
+            <v-progress-circular size="3em" color="primary" indeterminate />
+            Loading question data
           </v-col>
         </v-row>
       </v-container>
@@ -118,7 +122,7 @@
       type="warning"
       :confirm="confirmLoadAnswer"
     />        
-    <ExportDialog v-if="question.exportConfig" :config="question.exportConfig" :data="this.exportData" ref="exportDialog" />
+    <ExportDialog v-if="question?.exportConfig" :config="question.exportConfig" :data="this.exportData" ref="exportDialog" />
     <input v-if="devModeActive" style="display: none;" type="file" ref="fileInputAnswer" :accept="question.type+'.answer.json'" @change="importChosenAnswer" />    
   </v-app>
 </template>
@@ -152,7 +156,7 @@ export default {
   }),
   methods: {
     setAnswer(ans) {
-      console.log(ans);
+      //console.log(ans);
       this.$store.commit('setAnswer', ans);
     },
     restart() {
@@ -238,13 +242,13 @@ export default {
   },
 
   computed: {
-    ...mapState(['question', 'loadError', 'answer']),
+    ...mapState(['question', 'loadError', 'answer', 'loading']),
     ...mapGetters(['questionName', 'questionType']),
     unknownType() {
       return !types[this.questionType];
     },
     devModeActive() {
-      if (window?.localStorage?.DEV_MODE_ACTIVE) {
+      if (!(this.question?.examMode) && window?.localStorage?.DEV_MODE_ACTIVE) {
         return true;
       }
       return false;

@@ -34,6 +34,7 @@
           <v-list-item @click="confirmClear" :disabled="question == null"><v-list-item-title>New Question</v-list-item-title></v-list-item>
           <v-list-item @click.stop="importQuestion" ><v-list-item-title>Import JSON File</v-list-item-title></v-list-item>
           <v-list-item @click="exportQuestion" :disabled="question == null"><v-list-item-title>Export JSON File</v-list-item-title></v-list-item>
+          <v-list-item @click="remoteLink"><v-list-item-title>Create Remote Link</v-list-item-title></v-list-item>
         </v-list>
       </v-menu>
       <v-spacer></v-spacer>
@@ -79,6 +80,7 @@
     </v-snackbar>
 
     </v-main>
+    <RemoteLinkDialog ref="remoteLink" width="35em" />
     <ConfirmDialog ref="clearDialog" title="Create New Question" type="warning" width="35em"
     text="This will clear all current question data and create a new question from scratch"
     :confirm="clearQuestion" />
@@ -101,6 +103,7 @@ import questionTypes from '@/components/questions';
 import NewQuestionCard from './NewQuestionCard';
 import EditExamQuestion from './EditExamQuestion';
 import ImportDialog from './ImportDialog';
+import RemoteLinkDialog from './RemoteLinkDialog.vue';
 
 import ConfirmDialog from '@/components/util/ConfirmDialog';
 
@@ -111,7 +114,8 @@ export default {
     NewQuestionCard,
     EditExamQuestion,
     ImportDialog,
-    ConfirmDialog
+    ConfirmDialog,
+    RemoteLinkDialog,
   },
   data: () => ({
     snackbar: false,
@@ -132,6 +136,9 @@ export default {
     },
     confirmClear() {
       this.$refs.clearDialog.show();
+    },
+    remoteLink() {
+      this.$refs.remoteLink.show();
     },
     clearQuestion() {
       this.$store.commit('setQuestion', null);

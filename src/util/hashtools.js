@@ -60,9 +60,13 @@ export function processHashInStore(store, loadAction='setQuestion', errorAction=
                 unpackResult = { data: JSON.parse(json), validated: false };
             }
             const question = unpackResult.data;
-            // In the future, we could check validation here
-            store.commit(loadAction, question);
-            document.title = question.name;
+            if (question?.type == 'redirect') {
+              store.dispatch('loadExternal', question.url);
+            }
+            else {
+              // In the future, we could check validation here or in the store itself when loading the question
+              store.commit(loadAction, question);
+            }
           }
           catch (e) {
             console.log(e);

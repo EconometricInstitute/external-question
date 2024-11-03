@@ -37,11 +37,16 @@ const baseStore = {
     question: null,
     loadError: null,
     hasFocus: true,
-    answer: null
+    answer: null,
+    loading: false,
   },
   mutations: {
     setQuestion(state, question) {
+      state.loading = false;
       state.question = question;
+      
+      // TODO: Move window state modification from the store to a plugin?
+      document.title = question.name;
     },
     setLoadError(state, error) {
       state.loadError = error;
@@ -51,9 +56,39 @@ const baseStore = {
     },
     setAnswer(state, answer) {
       state.answer = answer;
+    },
+    setLoading(state, value) {
+      state.loading = value;
     }
   },
   actions: {
+    loadExternal(context, url) {
+      console.log('Loading question from external URL '+url);
+      context.commit('setLoading', true);
+        fetch(url)
+        .then(resp => {
+          if (resp.ok) {
+            resp.json()
+            .then(json => {
+                context.commit('setQuestion', json);
+            })
+            .catch(err => {
+              console.log(err);
+              context.commit('setLoadError', 'Error: the remote data does not look like json data. '+err);
+              context.commit('setLoading', false);
+            })
+          }
+          else {
+            context.commit('setLoadError', 'Error while loading the remote question question. Response status: '+resp.status+' '+resp.statusText);
+            context.commit('setLoading', false);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          context.commit('setLoadError', 'Error while performing retrieving remote content. '+err);
+          context.commit('setLoading', false);
+        })
+    }
   },
   modules: {
   },
