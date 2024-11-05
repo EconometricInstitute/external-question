@@ -25,6 +25,8 @@ import pako from 'pako';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+export const LOCAL_PREFIX = '{!~local~!}';
+
 export function unpack(hashStr) {
     const zippedData = Base64.toUint8Array(hashStr);
     const unzippedData = pako.inflate(zippedData);
@@ -47,6 +49,16 @@ export function processHashInStore(store, loadAction='setQuestion', errorAction=
     const updateHash = () => {
         const hash = window.location.hash.substring(1);
         if (hash.length > 0) {
+          // 
+          if (hash.startsWith(LOCAL_PREFIX)) {
+            const localUuid = hash.substring(LOCAL_PREFIX.length);
+            const key = 'question_'+localUuid;
+            if (window.localStorage[key]) {
+              const question = JSON.parse(window.localStorage[key]);
+              store.commit(loadAction, question);
+            }
+            return;
+          }
           try {
             let unpackResult;
             try {
@@ -60,6 +72,7 @@ export function processHashInStore(store, loadAction='setQuestion', errorAction=
                 unpackResult = { data: JSON.parse(json), validated: false };
             }
             const question = unpackResult.data;
+            console.log("Question data unpacked", question);
             if (question?.type == 'redirect') {
               store.dispatch('loadExternal', question.url);
             }

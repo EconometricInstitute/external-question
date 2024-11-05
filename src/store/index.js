@@ -25,6 +25,9 @@ import Vuex from 'vuex'
 import singletonPlugin from '@/store/singletonPlugin.js';
 import persistencePlugin from '@/store/persistencePlugin.js';
 
+import { LOCAL_PREFIX } from '../util/hashtools';
+import { v4 as uuidv4 } from 'uuid';
+
 const pluginsAvailable = {
   singleton: singletonPlugin,
   persistence: persistencePlugin
@@ -47,6 +50,15 @@ const baseStore = {
       
       // TODO: Move window state modification from the store to a plugin?
       document.title = question.name;
+
+      if (question.storeLocal && !window.location.hash.substring(1).startsWith(LOCAL_PREFIX)) {
+        const mapKey = 'map_' + question.uuid;
+        const localUuid = window.localStorage[mapKey] || uuidv4();
+        const questionKey = 'question_'+localUuid;
+        window.localStorage[questionKey] = JSON.stringify(question);
+        window.localStorage[mapKey] = localUuid;
+        window.location.hash = '#' + LOCAL_PREFIX + localUuid;
+      }
     },
     setLoadError(state, error) {
       state.loadError = error;
@@ -70,6 +82,7 @@ const baseStore = {
           if (resp.ok) {
             resp.json()
             .then(json => {
+                console.log('Question data retrieved from external source', json);
                 context.commit('setQuestion', json);
             })
             .catch(err => {
