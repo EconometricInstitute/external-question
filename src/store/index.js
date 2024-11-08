@@ -37,6 +37,7 @@ Vue.use(Vuex)
 
 const baseStore = {
   state: {
+    editor: false,
     question: null,
     loadError: null,
     hasFocus: true,
@@ -49,9 +50,14 @@ const baseStore = {
       state.question = question;
       
       // TODO: Move window state modification from the store to a plugin?
-      document.title = question.name;
+      if (state.editor) {
+        document.title = 'Edit - ' + question.name;
+      }
+      else {
+        document.title = question.name;
+      }
 
-      if (question.storeLocal && !window.location.hash.substring(1).startsWith(LOCAL_PREFIX)) {
+      if (!state.editor && question.storeLocal && !window.location.hash.substring(1).startsWith(LOCAL_PREFIX)) {
         const mapKey = 'map_' + question.uuid;
         const localUuid = window.localStorage[mapKey] || uuidv4();
         const questionKey = 'question_'+localUuid;
@@ -59,6 +65,9 @@ const baseStore = {
         window.localStorage[mapKey] = localUuid;
         window.location.hash = '#' + LOCAL_PREFIX + localUuid;
       }
+    },
+    setEditor(state, value) {
+      state.editor = value;
     },
     setLoadError(state, error) {
       state.loadError = error;
@@ -116,7 +125,7 @@ const baseStore = {
       if (state.question) {
         return state.question.type;
       }
-      return null;
+      return '';
     }
   },
 };

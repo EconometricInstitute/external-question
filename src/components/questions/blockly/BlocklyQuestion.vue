@@ -134,13 +134,17 @@
               <ul>
                 <li v-for="e in outputDisplay" :key="'test-'+e.index">
                   <span>With the following inputs:</span>
-                    <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
-                      {{val}} = {{JSON.stringify(key)}}
+                    <span class="blockly-inputvalues">
+                      <span class="blockly-inputvalue" v-for="(key, val) in e.input" :key="'test-input-'+e.index+'-'+val">
+                        {{val}} = {{JSON.stringify(key)}}
+                      </span>
                     </span>
                   <span v-if="!e.output.error">
                     <span> your program produced the following outputs:</span>
-                    <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
-                      {{val}} = {{JSON.stringify(key)}}
+                    <span class="blockly-outputvalues">
+                      <span class="blockly-outputvalue" v-for="(key, val) in e.output.data" :key="'test-output-'+e.index+'-'+val">
+                        {{val}} = {{JSON.stringify(key)}}
+                      </span>
                     </span>
                   </span>
                   <span v-if="e.output.error">
@@ -364,8 +368,10 @@ export default {
         if (i in this.testOutput) {
           op = this.testOutput[i];
           for (const outputVar of this.outputOrder) {
-            if (op.data[outputVar]) {
+            if (op.data[outputVar] || op.data[outputVar] == 0 || op.data[outputVar] == '' || op.data[outputVar] == false) {
+              //const oldVal = op.data[outputVar];
               op.data[outputVar] = formatValue(op.data[outputVar], this.decimals, this.question.strictStrings);
+              //console.log('pre-formatting', oldVal, 'post-formatting', op.data[outputVar]);
             }
           }
         }
@@ -636,6 +642,12 @@ export default {
 .blockly-inputvalue, .blockly-outputvalue {
   font-family: monospace;
   font-size: 105%;
+}
+
+.blockly-inputvalue:not(:first-child):before,
+.blockly-outputvalue:not(:first-child):before {
+  content: ",";
+  margin-left: -0.5em;
 }
 
 .blockly-outputerror {

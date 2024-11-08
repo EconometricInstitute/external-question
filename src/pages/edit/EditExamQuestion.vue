@@ -146,7 +146,7 @@ export default {
       const q = {...this.question, name: newVal};
       this.updateUuid(q);
       this.$store.commit('setQuestion', q);
-      document.title = newVal;
+      document.title = 'Edit - ' + newVal;
     },
     updateDefaultAnswer(newVal) {
       const q = {...this.question, defaultAnswer: newVal};

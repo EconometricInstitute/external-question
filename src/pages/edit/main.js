@@ -28,6 +28,7 @@ import { processHashInStore } from '@/util/hashtools.js';
 Vue.config.productionTip = false
 
 const store = createStore([]);
+store.commit('setEditor', true);
 
 processHashInStore(store);
 

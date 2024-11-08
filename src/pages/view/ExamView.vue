@@ -46,7 +46,7 @@
       </v-btn>
       <v-btn v-if="question?.exportConfig" :disable="!exportData" class="margin-left" color="secondary" @click="save">
         <v-icon>mdi-export</v-icon>
-        {{ question.exportConfig.buttonText }}
+        {{ question?.exportConfig.buttonText }}
       </v-btn>
       <v-btn v-if="question?.showExitButton" class="margin-left" color="error" @click="exit">
         <v-icon>mdi-export</v-icon>
@@ -122,8 +122,8 @@
       type="warning"
       :confirm="confirmLoadAnswer"
     />        
-    <ExportDialog v-if="question?.exportConfig" :config="question.exportConfig" :data="this.exportData" ref="exportDialog" />
-    <input v-if="devModeActive" style="display: none;" type="file" ref="fileInputAnswer" :accept="question.type+'.answer.json'" @change="importChosenAnswer" />    
+    <ExportDialog v-if="question?.exportConfig" :config="question?.exportConfig" :data="this.exportData" ref="exportDialog" />
+    <input v-if="devModeActive" style="display: none;" type="file" ref="fileInputAnswer" :accept="question?.type+'.answer.json'" @change="importChosenAnswer" />    
   </v-app>
 </template>
 

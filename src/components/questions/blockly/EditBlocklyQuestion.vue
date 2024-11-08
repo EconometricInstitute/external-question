@@ -52,7 +52,7 @@
           <v-slider v-model.number="value.decimals" min="0" step="1" max="8" ticks thumb-label 
             :label="'Number of decimals to compare in numbers '+value.decimals" />
           <v-checkbox v-model="value.strictString" label="Perform strict comparison of strings (correct spacing and case are required)" />
-          <v-text-field class="short-field" label="Answer code prefix" v-model="value.hashPrefix" @input="updateHashLength"/>
+          <v-text-field class="short-field" label="Answer code prefix" v-model="value.hashPrefix" @input="updateHashPrefix"/>
           <v-text-field class="short-field" label="Answer code repetitions" v-model="value.hashReps" min="1" type="number" @input="updateHashReps"/>
           <v-text-field class="short-field" label="Answer code length" v-model="value.hashLength" min="1" type="number" @input="updateHashLength"/>
           <v-checkbox v-model="value.autoDownload" label="Automatically download a copy of the answer file upon submitting" />
