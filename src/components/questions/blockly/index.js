@@ -45,7 +45,9 @@ function exportAnswer(question, _, component) {
             if (config.type == 'file') {
                 // Output file
                 const content = component.generateFile();
-                resolve({ type: 'file', filename: config.filename, contentType: 'text', content});
+                const replacement = component.answerCode || '';
+                const filename = config.filename.replaceAll('{{answerCode}}', replacement);
+                resolve({ type: 'file', filename: filename, contentType: 'text', content});
             }
         }
         catch (err) {

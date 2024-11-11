@@ -276,12 +276,14 @@ function formatValue(value, fixedLength=0, strictStrings=false) {
     return value;
 }
 
-function generateFile(workspace, answer, outputs, rawCode,exampleIncorrect, hasUndefined) {
+function generateFile(workspace, answer, outputs, rawCode,exampleIncorrect, hasUndefined, questionUuid='', answerUuid='') {
     const dom = Blockly.Xml.workspaceToDom(workspace);
     const xml = Blockly.Xml.domToText(dom);
     const {svg, style} = getSVG(workspace);
 	var html_text = '<!doctype html>\n<html><head><meta charset="utf8" />';
-    html_text += '<style>' + style + '</style>';
+    html_text += '<style>' + style + '</style>\n';
+    html_text += '<meta name="external-question-uuid" content="' + questionUuid + '"/>\n'
+    html_text += '<meta name="external-question-answer-uuid" content="' + answerUuid + '"/>\n'
     html_text += '</head><body>\n';
 	html_text += '<div>\n<h3>Blockly Program used to generate answerCode "'+answer+'"</h3>\n';
 	html_text += svg;

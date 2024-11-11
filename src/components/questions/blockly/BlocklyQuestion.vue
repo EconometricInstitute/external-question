@@ -164,6 +164,7 @@
 <script>
 //import VueMarkdownPlus from 'vue-markdown-plus';
 import * as md5hex from 'md5-hex';
+import { v4 as uuidv4 } from 'uuid';
 
 import MarkdownDisplay from '@/components/util/MarkdownDisplay';
 import AnswerCodeDisplay from '@/components/util/AnswerCodeDisplay';
@@ -323,7 +324,9 @@ export default {
     generateFile() {
       // function generateFile(workspace, answer, answerlog, rawCode, exampleIncorrect, hasUndefined) {
       const workspace = this.$refs.workspace.getWorkspace();
-      return generateFile(workspace, this.answerCode, this.outputDisplay, this.code.display, this.compareFailed, this.outputMissing )
+      return generateFile(workspace, this.answerCode, this.outputDisplay, this.code.display, this.compareFailed, this.outputMissing,
+        this.question.uuid, uuidv4()
+      )
     },
     saveFile() {
       const fileContent = this.generateFile();

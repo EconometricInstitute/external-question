@@ -240,7 +240,6 @@ export default {
       window.location.reload();
     }
   },
-
   computed: {
     ...mapState(['question', 'loadError', 'answer', 'loading']),
     ...mapGetters(['questionName', 'questionType']),
