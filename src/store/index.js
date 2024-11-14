@@ -43,6 +43,7 @@ const baseStore = {
     hasFocus: true,
     answer: null,
     loading: false,
+    saveUrl: null,
   },
   mutations: {
     setQuestion(state, question) {
@@ -80,6 +81,10 @@ const baseStore = {
     },
     setLoading(state, value) {
       state.loading = value;
+    },
+    setSaveUrl(state, value) {
+      state.saveUrl = value;
+      console.log('Setting save URL to '+value);
     }
   },
   actions: {

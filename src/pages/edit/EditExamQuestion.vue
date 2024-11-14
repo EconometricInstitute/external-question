@@ -114,6 +114,8 @@ const questionEditors = Object.fromEntries(Object.entries(types).map(([key, valu
 
 import ExportConfigTab from './ExportConfigTab.vue';
 
+import { mapState } from 'vuex';
+
 export default {
   name: 'EditExamQuestion',
   props: [
@@ -138,7 +140,7 @@ export default {
   }),
   methods: {
     updateUuid(q) {
-      if (!this.uuidFixed) {
+      if (!this.uuidFixed && !this.saveUrl) {
         q.uuid = uuidv4();
       }
     },
@@ -179,6 +181,7 @@ export default {
     unknownType() {
       return !types[this.question.type];
     },
+    ...mapState(['saveUrl']),
   }
 };
 </script>

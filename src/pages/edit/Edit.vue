@@ -40,6 +40,10 @@
       <v-spacer></v-spacer>
       <h3>Edit Question</h3>
       <v-spacer></v-spacer>
+      <v-btn color="secondary" dark v-if="saveUrl" @click="saveRemote">
+        <v-icon>mdi-cloud-upload</v-icon> Save
+      </v-btn>
+      &nbsp;
       <v-btn color="secondary" dark :disabled="question == null" :href="'view.html#'+questionHash" target="_blank">
         <v-icon>mdi-eye</v-icon> Preview
       </v-btn>
@@ -196,10 +200,32 @@ export default {
       //copyToClipboard(text, { format: 'text/html'});
       this.snackbar = true;
       this.snackbarText = 'Text copied to the clipboard. You can paste this text for example into Ans or Canvas.';
+    },
+    saveRemote() {
+      if (this.saveUrl) {
+        fetch(this.saveUrl, {
+          method: 'POST',
+          body: JSON.stringify(this.question)
+        })
+        .then(resp => {
+          // TODO: check if response was okay
+          this.snackbar = true;
+          if (resp.ok) {
+            this.snackbarText = 'Question succesfully stored'
+          }
+          else {
+            this.snackbarText = 'Error while storing the question. Response status: '+resp.status+' '+resp.statusText
+          }
+        })
+        .catch(err => {
+          this.snackbar = true;
+            this.snackbarText = 'Error while storing the question. '+err;
+        })
+      }
     }
   },
   computed: {
-    ...mapState(['question']),
+    ...mapState(['question', 'saveUrl']),
     questionHash() {
       if (this.question == null) {
         return '';

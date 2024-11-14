@@ -33,7 +33,7 @@ export function unpack(hashStr) {
     const jsonStr = decoder.decode(unzippedData);
     const container = JSON.parse(jsonStr);
     // TODO: in the future we could add validation to the container
-    return { data: container.payload, validated: false };
+    return { data: container.payload, validated: false, saveUrl: container?.saveUrl };
 }
 
 export function pack(object) {
@@ -71,7 +71,9 @@ export function processHashInStore(store, loadAction='setQuestion', errorAction=
                 const json = Base64.decode(hash);
                 unpackResult = { data: JSON.parse(json), validated: false };
             }
+            console.log(unpackResult);
             const question = unpackResult.data;
+            const saveUrl = unpackResult?.saveUrl;
             console.log("Question data unpacked", question);
             if (question?.type == 'redirect') {
               store.dispatch('loadExternal', question.url);
@@ -79,6 +81,9 @@ export function processHashInStore(store, loadAction='setQuestion', errorAction=
             else {
               // In the future, we could check validation here or in the store itself when loading the question
               store.commit(loadAction, question);
+            }
+            if (saveUrl) {
+              store.commit('setSaveUrl', saveUrl);
             }
           }
           catch (e) {
