@@ -91,7 +91,7 @@
           ></component>
         </v-tab-item>
         <v-tab-item eager class="fill-height">
-          <ExportConfigTab v-model="question.exportConfig" :question="question" />
+          <ExportConfigTab ref="exportConfig" :value="question.exportConfig" @input="updateExportConfig" :question="question" />
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -162,6 +162,11 @@ export default {
     },
     updateQuestion(newVal) {
       const q = {...this.question, ...newVal};
+      this.updateUuid(q);
+      this.$store.commit('setQuestion', q);
+    },
+    updateExportConfig(newVal) {
+      const q = {...this.question, exportConfig: newVal};
       this.updateUuid(q);
       this.$store.commit('setQuestion', q);
     },

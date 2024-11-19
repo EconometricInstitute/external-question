@@ -99,10 +99,26 @@ export default {
         linkActive: false,
         link: '',
         linkText: '',
+        loaded: false
     }),
+    created() {
+        this.loaded = false;
+        if (this.value) {
+            const value = this.value;
+            this.type = value?.type || 'none';
+            this.buttonText = value?.buttonText || 'Save Answer';
+            this.exportTitle = value?.exportTitle || 'Save Answer';
+            this.instructions = value?.instructions || '';
+            this.filename = value?.filename || 'my-result.answer.json';
+            this.linkActive = value.linkActive ? true : false;
+            this.link = value?.link || '';
+            this.linkText = value?.linkText || '';
+        }
+        this.$nextTick(() => this.loaded = true);
+    },
     methods: {
         updateFilename() {
-            if (this.question?.name) {
+            if (this.loaded && this.question?.name) {
                 this.filename = this.question.name.replaceAll(/[^A-Za-z0-9_-]/g,'');
                 if (this.type == 'file') {
                     this.filename += getDefaultExtension(this.question);
@@ -144,6 +160,7 @@ export default {
             this.updateFilename();
         },
         value() {
+            this.loaded = false;
             if (!this.value) {
                 this.type = 'none';
             }
@@ -153,12 +170,12 @@ export default {
                 this.exportTitle = this.value.exportTitle;
                 this.instructions = this.value.instructions;
                 this.filename = this.value.filename;
-                this.copiedTex = this.value.copiedTex;
+                this.copiedText = this.value.copiedText;
                 this.useLink = this.value.link && this.value.linkText ? true : false;
                 this.link = this.value.link;
                 this.linkText = this.value.linkText;
-
             }
+            this.$nextTick(() => this.loaded = true);
         },
         exportConfig() {
             this.$emit('input', this.exportConfig)
